@@ -1,26 +1,752 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../components/arc/foundation.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ───────────────────────── Typography ───────────────────────── */
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/geist/Geist-Variable.woff2') format('woff2-variations'),
+       url('/fonts/geist/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/geist/GeistMono-Variable.woff2') format('woff2-variations'),
+       url('/fonts/geist/GeistMono-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url('/fonts/fira-code/FiraCode-Regular.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ───────────────────────── Design tokens ─────────────────────────
+   Modeled on macOS Sonoma / visionOS semantic colors.
+   All app chrome reads from --mac-* so light/dark + accent switch instantly. */
+:root {
+  --font-sans: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Geist', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'Geist Mono', ui-monospace, monospace;
+
+  /* Surfaces */
+  --mac-desktop: #e9e9ee;
+  --mac-window: #f5f5f7;
+  --mac-sidebar: rgba(232, 232, 237, 0.72);
+  --mac-toolbar: rgba(246, 246, 248, 0.78);
+  --mac-surface: #ffffff;
+  --mac-elevated: rgba(255, 255, 255, 0.82);
+  --mac-canvas: #f2f2f5;
+  --mac-well: rgba(118, 118, 128, 0.08);
+
+  /* Labels */
+  --mac-label: #1d1d1f;
+  --mac-label-2: rgba(60, 60, 67, 0.72);
+  --mac-label-3: rgba(60, 60, 67, 0.45);
+  --mac-label-4: rgba(60, 60, 67, 0.22);
+
+  /* Lines & fills */
+  --mac-hairline: rgba(0, 0, 0, 0.07);
+  --mac-hairline-strong: rgba(0, 0, 0, 0.12);
+  --mac-fill: rgba(118, 118, 128, 0.12);
+  --mac-fill-2: rgba(118, 118, 128, 0.07);
+  --mac-highlight: rgba(255, 255, 255, 0.9);
+
+  /* System colors (light) */
+  --sys-blue: #007aff;
+  --sys-green: #28a745;
+  --sys-teal: #0fa5b8;
+  --sys-indigo: #5856d6;
+  --sys-purple: #af52de;
+  --sys-pink: #ff2d55;
+  --sys-red: #ff3b30;
+  --sys-orange: #ff9500;
+  --sys-yellow: #e0a800;
+
+  /* Accent (overridden by data-accent) */
+  --mac-tint: var(--sys-blue);
+  --mac-tint-fg: #ffffff;
+
+  /* Elevation */
+  --mac-shadow-xs: 0 0 0 0.5px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --mac-shadow-sm: 0 0 0 0.5px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --mac-shadow-md: 0 0 0 0.5px rgba(0, 0, 0, 0.05), 0 8px 24px -6px rgba(0, 0, 0, 0.1), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+  --mac-shadow-lg: 0 0 0 0.5px rgba(0, 0, 0, 0.06), 0 30px 70px -16px rgba(0, 0, 0, 0.22), 0 10px 28px -10px rgba(0, 0, 0, 0.12);
+  --mac-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  --mac-wallpaper:
+    radial-gradient(60% 50% at 0% 0%, rgba(173, 198, 255, 0.55), transparent 70%),
+    radial-gradient(50% 50% at 100% 0%, rgba(255, 196, 222, 0.45), transparent 70%),
+    radial-gradient(60% 60% at 50% 100%, rgba(196, 232, 222, 0.5), transparent 70%),
+    #eef0f5;
+
+  --radius: 0.75rem;
+
+  /* shadcn compatibility */
+  --background: var(--mac-window);
+  --foreground: var(--mac-label);
+  --card: var(--mac-surface);
+  --card-foreground: var(--mac-label);
+  --popover: var(--mac-surface);
+  --popover-foreground: var(--mac-label);
+  --primary: var(--mac-label);
+  --primary-foreground: var(--mac-surface);
+  --secondary: var(--mac-fill);
+  --secondary-foreground: var(--mac-label);
+  --muted: var(--mac-fill-2);
+  --muted-foreground: var(--mac-label-2);
+  --destructive: var(--sys-red);
+  --border: var(--mac-hairline);
+  --input: var(--mac-hairline-strong);
+  --ring: var(--mac-tint);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --mac-desktop: #0c0c0e;
+  --mac-window: #1c1c1e;
+  --mac-sidebar: rgba(36, 36, 40, 0.66);
+  --mac-toolbar: rgba(30, 30, 33, 0.78);
+  --mac-surface: #232326;
+  --mac-elevated: rgba(44, 44, 48, 0.78);
+  --mac-canvas: #161618;
+  --mac-well: rgba(118, 118, 128, 0.16);
+
+  --mac-label: #f5f5f7;
+  --mac-label-2: rgba(235, 235, 245, 0.66);
+  --mac-label-3: rgba(235, 235, 245, 0.38);
+  --mac-label-4: rgba(235, 235, 245, 0.18);
+
+  --mac-hairline: rgba(255, 255, 255, 0.075);
+  --mac-hairline-strong: rgba(255, 255, 255, 0.13);
+  --mac-fill: rgba(118, 118, 128, 0.26);
+  --mac-fill-2: rgba(118, 118, 128, 0.14);
+  --mac-highlight: rgba(255, 255, 255, 0.07);
+
+  --sys-blue: #0a84ff;
+  --sys-green: #30d158;
+  --sys-teal: #40c8e0;
+  --sys-indigo: #5e5ce6;
+  --sys-purple: #bf5af2;
+  --sys-pink: #ff375f;
+  --sys-red: #ff453a;
+  --sys-orange: #ff9f0a;
+  --sys-yellow: #ffd60a;
+
+  --mac-shadow-xs: 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --mac-shadow-sm: 0 0 0 0.5px rgba(0, 0, 0, 0.5), 0 2px 8px -1px rgba(0, 0, 0, 0.35);
+  --mac-shadow-md: 0 0 0 0.5px rgba(0, 0, 0, 0.55), 0 10px 30px -6px rgba(0, 0, 0, 0.5);
+  --mac-shadow-lg: 0 0 0 0.5px rgba(0, 0, 0, 0.6), 0 34px 80px -16px rgba(0, 0, 0, 0.7), 0 12px 30px -10px rgba(0, 0, 0, 0.45);
+  --mac-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --mac-wallpaper:
+    radial-gradient(60% 50% at 0% 0%, rgba(64, 86, 160, 0.35), transparent 70%),
+    radial-gradient(50% 50% at 100% 0%, rgba(140, 60, 120, 0.28), transparent 70%),
+    radial-gradient(60% 60% at 50% 100%, rgba(30, 110, 100, 0.25), transparent 70%),
+    #121214;
+}
+
+/* ───────────────────────── OLED Theme (True Black) ───────────────────────── */
+[data-theme="oled"] {
+  color-scheme: dark;
+
+  --mac-desktop: #000000;
+  --mac-window: #08080a;
+  --mac-sidebar: rgba(10, 10, 12, 0.85);
+  --mac-toolbar: rgba(8, 8, 10, 0.9);
+  --mac-surface: #0f0f12;
+  --mac-elevated: rgba(20, 20, 24, 0.88);
+  --mac-canvas: #000000;
+  --mac-well: rgba(255, 255, 255, 0.05);
+
+  --mac-label: #ffffff;
+  --mac-label-2: rgba(240, 240, 245, 0.72);
+  --mac-label-3: rgba(240, 240, 245, 0.42);
+  --mac-label-4: rgba(240, 240, 245, 0.18);
+
+  --mac-hairline: rgba(255, 255, 255, 0.09);
+  --mac-hairline-strong: rgba(255, 255, 255, 0.18);
+  --mac-fill: rgba(255, 255, 255, 0.12);
+  --mac-fill-2: rgba(255, 255, 255, 0.06);
+  --mac-highlight: rgba(255, 255, 255, 0.1);
+
+  --sys-blue: #0a84ff;
+  --sys-green: #30d158;
+  --sys-teal: #40c8e0;
+  --sys-indigo: #5e5ce6;
+  --sys-purple: #bf5af2;
+  --sys-pink: #ff375f;
+  --sys-red: #ff453a;
+  --sys-orange: #ff9f0a;
+  --sys-yellow: #ffd60a;
+
+  --mac-shadow-xs: 0 0 0 0.5px rgba(255, 255, 255, 0.06), 0 1px 2px rgba(0, 0, 0, 0.8);
+  --mac-shadow-sm: 0 0 0 0.5px rgba(255, 255, 255, 0.07), 0 2px 8px -1px rgba(0, 0, 0, 0.85);
+  --mac-shadow-md: 0 0 0 0.5px rgba(255, 255, 255, 0.08), 0 10px 30px -6px rgba(0, 0, 0, 0.9);
+  --mac-shadow-lg: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 34px 80px -16px rgba(0, 0, 0, 0.95);
+  --mac-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  --mac-wallpaper:
+    radial-gradient(70% 60% at 50% 0%, rgba(20, 25, 45, 0.5), transparent 75%),
+    #000000;
+}
+
+/* ───────────────────────── Warm Studio / Cream Theme (Luxury Paper) ───────────────────────── */
+[data-theme="cream"] {
+  color-scheme: light;
+
+  --mac-desktop: #f2eee5;
+  --mac-window: #faf6ef;
+  --mac-sidebar: rgba(244, 239, 230, 0.82);
+  --mac-toolbar: rgba(250, 246, 239, 0.9);
+  --mac-surface: #ffffff;
+  --mac-elevated: rgba(255, 255, 255, 0.92);
+  --mac-canvas: #f4efe7;
+  --mac-well: rgba(140, 115, 95, 0.08);
+
+  --mac-label: #2c2523;
+  --mac-label-2: rgba(68, 56, 50, 0.72);
+  --mac-label-3: rgba(68, 56, 50, 0.45);
+  --mac-label-4: rgba(68, 56, 50, 0.22);
+
+  --mac-hairline: rgba(140, 115, 95, 0.12);
+  --mac-hairline-strong: rgba(140, 115, 95, 0.22);
+  --mac-fill: rgba(140, 115, 95, 0.12);
+  --mac-fill-2: rgba(140, 115, 95, 0.06);
+  --mac-highlight: rgba(255, 255, 255, 0.95);
+
+  --sys-blue: #0284c7;
+  --sys-green: #16a34a;
+  --sys-teal: #0d9488;
+  --sys-indigo: #6366f1;
+  --sys-purple: #9333ea;
+  --sys-pink: #e11d48;
+  --sys-red: #dc2626;
+  --sys-orange: #ea580c;
+  --sys-yellow: #ca8a04;
+
+  --mac-tint: #b45309;
+
+  --mac-shadow-xs: 0 0 0 0.5px rgba(140, 115, 95, 0.12), 0 1px 2px rgba(140, 115, 95, 0.06);
+  --mac-shadow-sm: 0 0 0 0.5px rgba(140, 115, 95, 0.14), 0 2px 8px -1px rgba(140, 115, 95, 0.08);
+  --mac-shadow-md: 0 0 0 0.5px rgba(140, 115, 95, 0.16), 0 10px 28px -6px rgba(140, 115, 95, 0.12);
+  --mac-shadow-lg: 0 0 0 0.5px rgba(140, 115, 95, 0.18), 0 30px 70px -16px rgba(140, 115, 95, 0.18);
+  --mac-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  --mac-wallpaper:
+    radial-gradient(60% 50% at 0% 0%, rgba(245, 225, 205, 0.6), transparent 70%),
+    radial-gradient(50% 50% at 100% 0%, rgba(235, 215, 195, 0.5), transparent 70%),
+    #efe8dc;
+}
+
+/* ───────────────────────── Arctic Slate / Nordic Theme (Linear / Raycast) ───────────────────────── */
+[data-theme="nordic"] {
+  color-scheme: dark;
+
+  --mac-desktop: #080d16;
+  --mac-window: #0f1724;
+  --mac-sidebar: rgba(18, 27, 43, 0.76);
+  --mac-toolbar: rgba(15, 23, 36, 0.88);
+  --mac-surface: #152236;
+  --mac-elevated: rgba(25, 38, 60, 0.85);
+  --mac-canvas: #0c1320;
+  --mac-well: rgba(148, 163, 184, 0.12);
+
+  --mac-label: #f1f5f9;
+  --mac-label-2: rgba(226, 232, 240, 0.72);
+  --mac-label-3: rgba(203, 213, 225, 0.44);
+  --mac-label-4: rgba(148, 163, 184, 0.2);
+
+  --mac-hairline: rgba(56, 189, 248, 0.1);
+  --mac-hairline-strong: rgba(56, 189, 248, 0.2);
+  --mac-fill: rgba(148, 163, 184, 0.18);
+  --mac-fill-2: rgba(148, 163, 184, 0.09);
+  --mac-highlight: rgba(255, 255, 255, 0.08);
+
+  --sys-blue: #38bdf8;
+  --sys-green: #34d399;
+  --sys-teal: #2dd4bf;
+  --sys-indigo: #818cf8;
+  --sys-purple: #c084fc;
+  --sys-pink: #f472b6;
+  --sys-red: #f87171;
+  --sys-orange: #fb923c;
+  --sys-yellow: #facc15;
+
+  --mac-tint: #38bdf8;
+
+  --mac-shadow-xs: 0 0 0 0.5px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --mac-shadow-sm: 0 0 0 0.5px rgba(0, 0, 0, 0.55), 0 2px 8px -1px rgba(0, 0, 0, 0.45);
+  --mac-shadow-md: 0 0 0 0.5px rgba(0, 0, 0, 0.6), 0 10px 30px -6px rgba(0, 0, 0, 0.55);
+  --mac-shadow-lg: 0 0 0 0.5px rgba(0, 0, 0, 0.65), 0 34px 80px -16px rgba(0, 0, 0, 0.75);
+  --mac-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  --mac-wallpaper:
+    radial-gradient(70% 60% at 50% 0%, rgba(28, 55, 95, 0.45), transparent 75%),
+    radial-gradient(50% 50% at 100% 100%, rgba(15, 30, 60, 0.35), transparent 70%),
+    #090f1a;
+}
+
+/* Apple accent colors */
+[data-accent="blue"] { --mac-tint: var(--sys-blue); }
+[data-accent="purple"] { --mac-tint: var(--sys-purple); }
+[data-accent="pink"] { --mac-tint: var(--sys-pink); }
+[data-accent="orange"] { --mac-tint: var(--sys-orange); }
+[data-accent="green"] { --mac-tint: var(--sys-green); }
+[data-accent="graphite"] { --mac-tint: #8e8e93; }
+[data-theme="dark"][data-accent="graphite"] { --mac-tint: #98989d; }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-desktop: var(--mac-desktop);
+  --color-window: var(--mac-window);
+  --color-sidebar: var(--mac-sidebar);
+  --color-toolbar: var(--mac-toolbar);
+  --color-surface: var(--mac-surface);
+  --color-elevated: var(--mac-elevated);
+  --color-canvas: var(--mac-canvas);
+  --color-well: var(--mac-well);
+  --color-label: var(--mac-label);
+  --color-label-2: var(--mac-label-2);
+  --color-label-3: var(--mac-label-3);
+  --color-label-4: var(--mac-label-4);
+  --color-hairline: var(--mac-hairline);
+  --color-hairline-strong: var(--mac-hairline-strong);
+  --color-fill: var(--mac-fill);
+  --color-fill-2: var(--mac-fill-2);
+  --color-tint: var(--mac-tint);
+  --color-tint-fg: var(--mac-tint-fg);
+
+  --color-sys-blue: var(--sys-blue);
+  --color-sys-green: var(--sys-green);
+  --color-sys-teal: var(--sys-teal);
+  --color-sys-indigo: var(--sys-indigo);
+  --color-sys-purple: var(--sys-purple);
+  --color-sys-pink: var(--sys-pink);
+  --color-sys-red: var(--sys-red);
+  --color-sys-orange: var(--sys-orange);
+  --color-sys-yellow: var(--sys-yellow);
+
+  --shadow-mac-xs: var(--mac-shadow-xs);
+  --shadow-mac-sm: var(--mac-shadow-sm);
+  --shadow-mac-md: var(--mac-shadow-md);
+  --shadow-mac-lg: var(--mac-shadow-lg);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ───────────────────────── Base ───────────────────────── */
+* {
+  border-color: var(--mac-hairline);
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: transparent !important;
+  color: var(--mac-label);
+  font-family: var(--font-sans) !important;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+button, input, select, textarea, optgroup {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+button { cursor: default; }
+
+code, pre, kbd, samp, .font-mono {
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--mac-tint) 28%, transparent);
+}
+
+/* Thin overlay scrollbars, macOS style */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--mac-label-4);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background-color: var(--mac-label-3); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ───────────────────────── Components ───────────────────────── */
+@layer components {
+  .app-region-drag {
+    user-select: none;
+  }
+  .app-region-no-drag {
+    user-select: auto;
+  }
+
+  /* Frosted glass, visionOS-style */
+  .glass {
+    background: var(--mac-elevated);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    box-shadow: var(--mac-shadow-lg), var(--mac-inner-hi);
+    border: 0.5px solid var(--mac-hairline-strong);
+  }
+
+  .vibrancy {
+    background: var(--mac-sidebar);
+    backdrop-filter: blur(50px) saturate(190%);
+    -webkit-backdrop-filter: blur(50px) saturate(190%);
+  }
+
+  /* Soft content card */
+  .mac-card {
+    background: var(--mac-surface);
+    border-radius: 18px;
+    box-shadow: var(--mac-shadow-sm);
+  }
+
+  /* Grouped inset list (System Settings) */
+  .mac-group {
+    background: var(--mac-surface);
+    border-radius: 14px;
+    box-shadow: var(--mac-shadow-xs);
+    overflow: hidden;
+  }
+  .mac-group > * + * {
+    border-top: 0.5px solid var(--mac-hairline);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--mac-label-3);
+  }
+
+  /* Text field */
+  .mac-field {
+    width: 100%;
+    height: 32px;
+    border-radius: 9px;
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--mac-label);
+    background: var(--mac-fill-2);
+    border: 0.5px solid var(--mac-hairline);
+    outline: none;
+    transition: box-shadow 160ms var(--ease-apple), background-color 160ms var(--ease-apple);
+  }
+  .mac-field::placeholder { color: var(--mac-label-3); }
+  .mac-field:focus {
+    background: var(--mac-surface);
+    box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--mac-tint) 30%, transparent);
+    border-color: color-mix(in srgb, var(--mac-tint) 70%, transparent);
+  }
+
+  /* Buttons */
+  .mac-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: transform 140ms var(--ease-apple), background-color 160ms var(--ease-apple), box-shadow 160ms var(--ease-apple), opacity 160ms;
+    user-select: none;
+  }
+  .mac-btn:active:not(:disabled) { transform: scale(0.97); }
+  .mac-btn:disabled { opacity: 0.45; }
+
+  .mac-btn-primary {
+    color: var(--mac-tint-fg);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--mac-tint) 88%, white), var(--mac-tint));
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--mac-tint) 35%, transparent), inset 0 0.5px 0 rgba(255, 255, 255, 0.35), 0 0 0 0.5px color-mix(in srgb, var(--mac-tint) 60%, black);
+  }
+  .mac-btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
+
+  .mac-btn-secondary {
+    color: var(--mac-label);
+    background: var(--mac-surface);
+    box-shadow: var(--mac-shadow-xs), var(--mac-inner-hi);
+  }
+  [data-theme="dark"] .mac-btn-secondary { background: rgba(255, 255, 255, 0.09); }
+  .mac-btn-secondary:hover:not(:disabled) { background: color-mix(in srgb, var(--mac-surface) 92%, var(--mac-label)); }
+  [data-theme="dark"] .mac-btn-secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.13); }
+
+  .mac-btn-ghost {
+    color: var(--mac-label-2);
+    background: transparent;
+  }
+  .mac-btn-ghost:hover:not(:disabled) { background: var(--mac-fill-2); color: var(--mac-label); }
+
+  .mac-icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    color: var(--mac-label-2);
+    transition: background-color 140ms var(--ease-apple), color 140ms, transform 140ms var(--ease-apple);
+  }
+  .mac-icon-btn:hover:not(:disabled) { background: var(--mac-fill-2); color: var(--mac-label); }
+  .mac-icon-btn:active:not(:disabled) { transform: scale(0.92); }
+  .mac-icon-btn:disabled { opacity: 0.35; }
+
+  /* Status pill */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 5px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--mac-label-2);
+    background: var(--mac-fill-2);
+    box-shadow: inset 0 -0.5px 0 var(--mac-hairline-strong);
+  }
+
+  /* Dotted design canvas */
+  .dot-canvas {
+    background-color: var(--mac-canvas);
+    background-image: radial-gradient(var(--mac-label-4) 0.8px, transparent 0.8px);
+    background-size: 18px 18px;
+    background-position: -9px -9px;
+  }
+
+  /* Native range slider, macOS look */
+  .mac-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(to right, var(--mac-tint) var(--fill, 50%), var(--mac-fill) var(--fill, 50%));
+    outline: none;
+  }
+  .mac-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 140ms var(--ease-apple);
+  }
+  .mac-range:active::-webkit-slider-thumb { transform: scale(1.12); }
+
+  .mac-select {
+    appearance: none;
+    height: 26px;
+    border-radius: 7px;
+    padding: 0 26px 0 9px;
+    font-size: 12px;
+    color: var(--mac-label);
+    background-color: var(--mac-surface);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='none' stroke='%238e8e93' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4l2-2 2 2M3 6l2 2 2-2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    box-shadow: var(--mac-shadow-xs), var(--mac-inner-hi);
+    outline: none;
+  }
+  [data-theme="dark"] .mac-select { background-color: rgba(255, 255, 255, 0.08); }
+  .mac-select option { background: var(--mac-surface); color: var(--mac-label); }
+}
+
+.theme-switching, .theme-switching *, .theme-switching *::before, .theme-switching *::after {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ───────────────────────── Global Custom Pointer ───────────────────────── */
+html.custom-pointer-active,
+html.custom-pointer-active *,
+html.custom-pointer-active *::before,
+html.custom-pointer-active *::after,
+html.custom-pointer-active input,
+html.custom-pointer-active textarea,
+html.custom-pointer-active select,
+html.custom-pointer-active button,
+html.custom-pointer-active .monaco-editor,
+html.custom-pointer-active .monaco-editor * {
+  cursor: none !important;
+}
+
+/* ───────────────────────── ConfirmMorph File Tree Integration ───────────────────────── */
+.file-tree-confirm {
+  --control-height-sm: 22px !important;
+  --text-sm: 11px !important;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 11px !important;
+  vertical-align: middle;
+}
+
+.file-tree-confirm[data-state="idle"] {
+  opacity: 0;
+  transition: opacity 160ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.group:hover .file-tree-confirm[data-state="idle"],
+.group\/folder:hover .file-tree-confirm[data-state="idle"] {
+  opacity: 1;
+}
+
+.file-tree-confirm:not([data-state="idle"]) {
+  opacity: 1 !important;
+  z-index: 50;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+.file-tree-confirm[data-state="idle"] [class*="surface"] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.file-tree-confirm[data-state="idle"] [class*="surface"]::after {
+  display: none !important;
+}
+
+.file-tree-confirm[data-state="idle"] button {
+  padding: 0 4px !important;
+  gap: 0 !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+}
+
+.file-tree-confirm[data-tone="danger"][data-state="idle"] button {
+  color: var(--sys-red, #ef4444) !important;
+}
+
+.file-tree-confirm[data-tone="danger"][data-state="idle"] button:hover {
+  background: rgba(239, 68, 68, 0.12) !important;
+}
+
+.file-tree-confirm[data-tone="neutral"][data-state="idle"] button {
+  color: var(--mac-label-3, #8e8e93) !important;
+}
+
+.file-tree-confirm[data-tone="neutral"][data-state="idle"] button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--mac-label, #ffffff) !important;
+}
+
+.file-tree-confirm:not([data-state="idle"]) button {
+  font-size: 10.5px !important;
+  padding: 0 7px !important;
+  height: 17px !important;
+  font-weight: 500 !important;
+}
+
+.file-tree-confirm .icon {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.file-tree-confirm .icon > svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.file-tree-confirm span {
+  font-size: 11px !important;
+}
+
+.file-tree-confirm [class*="prompt"] {
+  padding: 0 4px 0 8px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important; /* Clearly readable dark text on white morph surface */
+}
+
+.file-tree-confirm [class*="primary"] {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.file-tree-confirm [class*="primary"]:hover {
+  background: #dc2626 !important;
+}
+
+/* Git rollback action specific primary button styling */
+.git-discard-confirm [class*="primary"] {
+  background: #0a84ff !important;
+  color: #ffffff !important;
+}
+
+.git-discard-confirm [class*="primary"]:hover {
+  background: #0071e3 !important;
+}
+
+/* Cancel button (Vazgeç / İptal) on white morph pill: Always crisp dark text */
+.file-tree-confirm [class*="secondary"] {
+  color: #374151 !important; /* Dark charcoal - crisp and 100% visible on white background */
+  font-weight: 600 !important;
+}
+
+.file-tree-confirm [class*="secondary"]:hover {
+  color: #111827 !important;
+  background: rgba(0, 0, 0, 0.08) !important;
 }
