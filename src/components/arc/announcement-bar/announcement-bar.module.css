@@ -1,0 +1,274 @@
+.collapse {
+  overflow: hidden;
+  container-type: inline-size;
+  font-family: var(--font-body, 'Geist', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif);
+  letter-spacing: var(--tracking-body, -0.012em);
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  position: relative;
+  z-index: 40;
+}
+
+/* The side column mirrors the controls, so the message stays centered on the page rather than in the leftover space. */
+.bar {
+  --icon: 28px;
+  --control-gap: 4px;
+  --muted: var(--text-secondary, rgba(255, 255, 255, 0.65));
+  display: grid;
+  grid-template-columns: calc(var(--controls, 0) * var(--icon) + max(var(--controls, 0) - 1, 0) * var(--control-gap)) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3, 12px);
+  padding: 6px 10px 6px 16px;
+  background: radial-gradient(ellipse 40% 180% at 8% 95%, rgba(99, 102, 241, 0.22) 0%, transparent 100%),
+              radial-gradient(ellipse 42% 180% at 92% 5%, rgba(14, 165, 233, 0.2) 0%, transparent 100%),
+              radial-gradient(ellipse 48% 180% at 50% 115%, rgba(168, 85, 247, 0.17) 0%, transparent 100%),
+              #111317;
+  color: #f3f4f6;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), inset 0 -0.5px 0 rgba(255, 255, 255, 0.06);
+}
+
+:global([data-appearance="light"]) .bar,
+:global([data-theme="light"]) .bar {
+  background: radial-gradient(ellipse 32% 180% at 3% 96%, #f5d0d1 0%, transparent 100%),
+              radial-gradient(ellipse 35% 180% at 95% 5%, #cfe0fd 0%, transparent 100%),
+              radial-gradient(ellipse 40% 180% at 50% 110%, #f4e8c1 0%, transparent 100%),
+              #faf9f7;
+  color: #21242b;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  --muted: rgba(33, 36, 43, 0.68);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.bar[data-tone="inverted"] {
+  background: #090a0d;
+  color: #f8fafc;
+  --muted: rgba(248, 250, 252, 0.6);
+}
+
+.side { min-width: 0; }
+.viewport { position: relative; min-height: 32px; overflow: hidden; }
+
+/* Faces overlap in place; the entering one reports its height and the viewport springs to it. */
+.face {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+}
+
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 3px 0;
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.text {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The countdown is one run of text: every cell shares the line box, so digits, colons, and the day mark sit on the message baseline. */
+.countdown { display: inline-flex; align-items: baseline; gap: 6px; color: var(--muted); white-space: nowrap; }
+.countdownLabel { color: inherit; }
+.time { display: inline-flex; align-items: baseline; color: inherit; font-variant-numeric: tabular-nums; font-weight: 550; line-height: inherit; }
+.time[data-pending] { opacity: 0; }
+.digit { position: relative; display: inline-block; overflow: hidden; overflow: clip; text-align: center; }
+.digitSizer { visibility: hidden; }
+.digitFace { position: absolute; inset: 0; display: block; }
+.unit { display: inline-flex; align-items: baseline; }
+.unitMark { margin-left: 1px; color: var(--muted); font-weight: 400; }
+.sep { display: inline-block; padding-inline: 1px; color: var(--muted); font-feature-settings: "case"; font-weight: 400; }
+.gap { display: inline-block; width: .4em; }
+
+/* Arc UI Pill CTA Button */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px 3px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.cta:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-0.5px);
+  color: #ffffff;
+}
+
+:global([data-appearance="light"]) .cta,
+:global([data-theme="light"]) .cta {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #1a1c22;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-appearance="light"]) .cta:hover,
+:global([data-theme="light"]) .cta:hover {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #000000;
+}
+
+.cta svg {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cta:hover svg {
+  transform: translateX(3px);
+}
+
+/* Arc UI Frosted Monochromatic Badge (No harsh neon) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2.5px 8px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.badgeDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.badgeDotPulse {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+:global([data-appearance="light"]) .badge,
+:global([data-theme="light"]) .badge {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #1a1c22;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+:global([data-appearance="light"]) .badgeDot,
+:global([data-theme="light"]) .badgeDot,
+:global([data-appearance="light"]) .badgeDotPulse,
+:global([data-theme="light"]) .badgeDotPulse {
+  background: #1a1c22;
+}
+
+.progressTrack {
+  display: inline-block;
+  width: 76px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.85);
+  transition: width 0.3s ease;
+}
+
+:global([data-appearance="light"]) .progressTrack,
+:global([data-theme="light"]) .progressTrack {
+  background: rgba(0, 0, 0, 0.09);
+}
+
+:global([data-appearance="light"]) .progressBar,
+:global([data-theme="light"]) .progressBar {
+  background: #1a1c22;
+}
+
+.controls { display: flex; align-items: center; gap: var(--control-gap, 4px); }
+
+.icon, .ring {
+  position: relative;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.16s ease;
+}
+
+.icon:hover, .ring:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+:global([data-appearance="light"]) .icon:hover,
+:global([data-theme="light"]) .icon:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111113;
+}
+
+.ring svg { width: 20px; height: 20px; overflow: visible; transform: rotate(-90deg); }
+.ringTrack { fill: none; stroke: currentColor; stroke-opacity: .22; stroke-width: 1.75; }
+.ringFill { fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 1.75; }
+.ringIcon { position: absolute; inset: 0; display: grid; place-items: center; }
+.ringIcon svg { width: 9px; height: 9px; transform: none; fill: currentColor; }
+
+/* Narrow bars drop the mirror column and read from the start edge. */
+@container (max-width: 560px) {
+  .bar { grid-template-columns: 0 minmax(0, 1fr) auto; gap: 0 8px; padding-left: 12px; }
+  .face { justify-content: flex-start; }
+  .message { justify-content: flex-start; column-gap: 8px; text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon, .ring, .cta, .cta svg { transition: none; transform: none !important; }
+}
