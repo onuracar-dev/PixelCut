@@ -42,6 +42,7 @@ import { GitSourceControl } from "@/components/git/git-source-control";
 import { GitSidebarPanel } from "@/components/git/git-sidebar-panel";
 import { GitHubAuthModal } from "@/components/git/github-auth-modal";
 import { OnboardingWizard, OnboardingData } from "@/components/onboarding/onboarding-wizard";
+import { SupportModal } from "@/components/support/support-modal";
 import { AuthState, loadSavedAuthState, initSupabaseAuthListener } from "@/lib/supabase-auth";
 import {
   classroomRealtime,
@@ -76,6 +77,7 @@ import {
   GitBranch,
   Image as ImageIcon,
   Layers,
+  LifeBuoy,
   Monitor,
   Moon,
   Palette,
@@ -641,6 +643,7 @@ export default function Home() {
   const [isAppInitialized, setIsAppInitialized] = React.useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState<boolean>(false);
   const [onboardingProfile, setOnboardingProfile] = React.useState<OnboardingData | null>(null);
+  const [isSupportModalOpen, setIsSupportModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -1051,12 +1054,12 @@ export default function Home() {
 
   const userMenuItems = [
     {
-      label: "Ders İçi Lab Odaları",
+      label: "Ders İçi",
       icon: <BookOpen className="size-4" />,
       onSelect: () => setActiveFile("challenges.inclass"),
     },
     {
-      label: "Ders Dışı CSSBattle Arenası",
+      label: "Ders Dışı",
       icon: <Swords className="size-4" />,
       onSelect: () => setActiveFile("challenges.practice"),
     },
@@ -1072,6 +1075,11 @@ export default function Home() {
         setIsSidebarOpen(true);
         setSidebarTab("git");
       },
+    },
+    {
+      label: "Destek & Hata Bildirimi",
+      icon: <LifeBuoy className="size-4 text-tint" />,
+      onSelect: () => setIsSupportModalOpen(true),
     },
   ];
 
@@ -1489,6 +1497,14 @@ export default function Home() {
           );
         }
       },
+    },
+    {
+      id: "action-support",
+      label: "Destek & Hata Bildirimi (Teknik Destek)",
+      group: "Eylemler",
+      icon: <LifeBuoy className="size-3.5 text-tint" />,
+      keywords: "destek support hata bug sorun yardim iletisim diagnostic rapor ss screenshot",
+      onSelect: () => setIsSupportModalOpen(true),
     },
     {
       id: "theme-light",
@@ -2412,6 +2428,17 @@ export default function Home() {
           onComplete={handleCompleteOnboarding}
           onClose={() => setIsOnboardingOpen(false)}
           initialRole={userRole}
+        />
+
+        {/* Support & Issue Diagnostic Modal */}
+        <SupportModal
+          isOpen={isSupportModalOpen}
+          onClose={() => setIsSupportModalOpen(false)}
+          currentUser={{
+            name: onboardingProfile?.fullName || "Öğrenci",
+            email: authState.user?.email || "ogrenci@lab.edu.tr",
+            role: userRole,
+          }}
         />
       </MacWindow>
   );
