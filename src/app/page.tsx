@@ -928,7 +928,7 @@ export default function Home() {
       setActiveFile("classroom.radar");
       setGitToast({
         type: "info",
-        message: "👨‍🏫 Öğretmen Modu: Canlı Sınıf Radarı ve Görev Yönetimi Aktif",
+        message: "👨‍🏫 Öğretmen Modu: Kullanıcılar ve Görev Yönetimi Aktif",
       });
     } else if (newRole === "student") {
       setActiveFile("styles.css");
@@ -1366,16 +1366,16 @@ export default function Home() {
     },
     {
       id: "view-inclass-rooms",
-      label: "Ders İçi Canlı Lab Odaları",
+      label: "Ders İçi",
       group: "Görünümler",
       icon: <BookOpen className="size-3.5 text-tint" />,
-      hint: "Canlı Sınıf Odaları",
+      hint: "Laboratuvar Odaları",
       keywords: "ders ici lab canli sinif odev oturum",
       onSelect: () => setActiveFile("challenges.inclass"),
     },
     {
       id: "view-practice-arena",
-      label: "Ders Dışı CSSBattle Arenası",
+      label: "Ders Dışı",
       group: "Görünümler",
       icon: <Swords className="size-3.5 text-tint" />,
       hint: "CSSBattle & Pratik",
@@ -1384,19 +1384,19 @@ export default function Home() {
     },
     {
       id: "view-radar",
-      label: "Canlı Sınıf Radarı",
+      label: "Kullanıcılar",
       group: "Görünümler",
       icon: <Radio className="size-3.5 text-sys-green" />,
-      hint: "15 Öğrenci Canlı",
-      keywords: "sinif radar ogrenci canli mission control",
+      hint: "Canlı Kullanıcılar",
+      keywords: "kullanicilar sinif radar ogrenci canli mission control",
       onSelect: () => setActiveFile("classroom.radar"),
     },
     {
       id: "view-leaderboard",
-      label: "Mühendislik Sıralaması",
+      label: "Liderlik Tablosu",
       group: "Görünümler",
       icon: <Trophy className="size-3.5 text-sys-yellow" />,
-      hint: "Liderlik Tablosu",
+      hint: "Liderlik Sıralaması",
       keywords: "rank liderlik puan skor siralama",
       onSelect: () => setActiveFile("leaderboard.rank"),
     },
@@ -1615,13 +1615,13 @@ export default function Home() {
         !activeFile
           ? "PixelCut"
           : activeFile === "classroom.radar"
-          ? "Canlı Sınıf Radarı"
+          ? "Kullanıcılar"
           : activeFile === "challenges.inclass" || activeFile === "challenges.rooms"
-          ? "Ders İçi Canlı Lab Odaları"
+          ? "Ders İçi"
           : activeFile === "challenges.practice"
-          ? "Ders Dışı CSSBattle Arenası"
+          ? "Ders Dışı"
           : activeFile === "leaderboard.rank"
-          ? "Mühendislik Sıralaması"
+          ? "Liderlik Tablosu"
           : activeFile === "git.sourcecontrol"
           ? "GitHub Kaynak Denetimi"
           : activeFile === "settings.config"

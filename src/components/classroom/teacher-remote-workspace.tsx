@@ -139,10 +139,10 @@ export function TeacherRemoteWorkspace({
             type="button"
             onClick={onCloseSession}
             className="mac-btn mac-btn-secondary h-8 px-2.5 text-[12px] gap-1.5"
-            title="Sınıf Radarına Geri Dön"
+            title="Kullanıcılara Geri Dön"
           >
             <ArrowLeft className="size-3.5" />
-            <span className="hidden sm:inline">Radara Dön</span>
+            <span className="hidden sm:inline">Kullanıcılara Dön</span>
           </button>
 
           <div className="h-5 w-[1px] bg-hairline" />

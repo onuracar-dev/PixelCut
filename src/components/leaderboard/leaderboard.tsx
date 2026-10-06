@@ -502,7 +502,7 @@ export function Leaderboard({
 
               <div className="rounded-[14px] border border-hairline bg-well/70 p-3 space-y-0.5">
                 <span className="text-[10.5px] font-mono text-label-3 uppercase tracking-wider block">
-                  Toplam Mühendislik XP
+                  Toplam Liderlik XP
                 </span>
                 <span className="font-mono text-[18px] font-bold text-label">
                   {selectedStudentForModal.totalScore} XP

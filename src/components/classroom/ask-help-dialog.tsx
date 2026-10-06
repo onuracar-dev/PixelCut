@@ -98,7 +98,7 @@ export function AskHelpDialog({
                     Eğitmenden Yardım İste
                   </h3>
                   <p className="text-[12px] text-label-2 mt-0.5">
-                    Talebiniz hocanın sınıf radarına bildirim olarak düşer.
+                    Talebiniz hocanın ekranına bildirim olarak düşer.
                   </p>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export function AskHelpDialog({
                   className="mac-btn mac-btn-primary text-[12.5px]"
                 >
                   <Hand className="size-3.5" />
-                  <span>Sınıf Radarına Bildir</span>
+                  <span>Eğitmene Bildir</span>
                 </button>
               </div>
             </form>

@@ -240,10 +240,10 @@ export function RoomsArenaView({
           <div>
             <h1 className="text-[18px] font-bold tracking-tight text-label">
               {isOnlyInClass
-                ? "Ders İçi Canlı Lab Odaları"
+                ? "Ders İçi"
                 : isOnlyPractice
-                ? "Ders Dışı CSSBattle Arenası"
-                : "Laboratuvar Odaları & CSSBattle Arenası"}
+                ? "Ders Dışı"
+                : "Ders İçi & Ders Dışı"}
             </h1>
             <p className="text-[12px] text-label-2 mt-0.5">
               {isOnlyInClass
@@ -288,14 +288,14 @@ export function RoomsArenaView({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <h2 className="text-[14.5px] font-semibold tracking-tight text-label">
-                  Ders İçi & Canlı Lab Odaları
+                  Ders İçi
                 </h2>
                 <span className="pill bg-well border border-hairline text-label-3 font-mono text-[10.5px]">
                   {inClassChallenges.length} Oda
                 </span>
               </div>
               <span className="text-[11.5px] text-label-3 hidden sm:inline">
-                Canlı laboratuvar oturumları ve haftalık teslimli ödevler
+                Laboratuvar oturumları ve haftalık teslimli ödevler
               </span>
             </div>
 
@@ -311,13 +311,13 @@ export function RoomsArenaView({
           </section>
         )}
 
-        {/* 2. DERS DIŞI CSSBATTLE PRATİK ODALARI */}
+        {/* 2. DERS DIŞI */}
         {!isOnlyInClass && (
           <section className={cn("space-y-3", !isOnlyPractice && "pt-4 border-t border-hairline")}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div className="flex items-center gap-2">
                 <h2 className="text-[14.5px] font-semibold tracking-tight text-label">
-                  Ders Dışı CSSBattle Pratik Odaları
+                  Ders Dışı
                 </h2>
                 <span className="pill bg-well border border-hairline text-label-3 font-mono text-[10.5px]">
                   {practiceChallenges.length} Görev

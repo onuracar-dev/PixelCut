@@ -237,15 +237,15 @@ export function AppDock({
           </DockIcon>
         </DockItem>
 
-        {/* Live Classroom Radar */}
+        {/* Kullanıcılar (Canlı Sınıf) */}
         <DockItem
           onClick={() => handleSelectFile("classroom.radar")}
           isActive={activeFile === "classroom.radar"}
         >
           <DockLabel side={labelSide}>
             {helpRequestsCount && helpRequestsCount > 0
-              ? `🚨 Canlı Sınıf Radarı (${helpRequestsCount} Yardım Talebi!)`
-              : `Canlı Sınıf Radarı (${liveStudentsCount} Çevrimiçi)`}
+              ? `🚨 Kullanıcılar (${helpRequestsCount} Yardım Talebi!)`
+              : `Kullanıcılar (${liveStudentsCount} Çevrimiçi)`}
           </DockLabel>
           <DockIcon>
             <div className={cn("relative", getIconBoxClass(activeFile === "classroom.radar"))}>
@@ -269,12 +269,12 @@ export function AppDock({
           </DockIcon>
         </DockItem>
 
-        {/* Ders İçi: Canlı Lab Odaları */}
+        {/* Ders İçi */}
         <DockItem
           onClick={() => handleSelectFile("challenges.inclass")}
           isActive={activeFile === "challenges.inclass" || activeFile === "challenges.rooms"}
         >
-          <DockLabel side={labelSide}>Ders İçi (Canlı Lab Odaları)</DockLabel>
+          <DockLabel side={labelSide}>Ders İçi</DockLabel>
           <DockIcon>
             <div className={getIconBoxClass(activeFile === "challenges.inclass" || activeFile === "challenges.rooms")}>
               <BookOpen className={iconSize} />
@@ -282,12 +282,12 @@ export function AppDock({
           </DockIcon>
         </DockItem>
 
-        {/* Ders Dışı: CSSBattle Arenası */}
+        {/* Ders Dışı */}
         <DockItem
           onClick={() => handleSelectFile("challenges.practice")}
           isActive={activeFile === "challenges.practice"}
         >
-          <DockLabel side={labelSide}>Ders Dışı (CSSBattle Arenası)</DockLabel>
+          <DockLabel side={labelSide}>Ders Dışı</DockLabel>
           <DockIcon>
             <div className={getIconBoxClass(activeFile === "challenges.practice")}>
               <Swords className={iconSize} />
@@ -295,12 +295,12 @@ export function AppDock({
           </DockIcon>
         </DockItem>
 
-        {/* Leaderboard Rank */}
+        {/* Liderlik Tablosu */}
         <DockItem
           onClick={() => handleSelectFile("leaderboard.rank")}
           isActive={activeFile === "leaderboard.rank"}
         >
-          <DockLabel side={labelSide}>Mühendislik Sıralaması</DockLabel>
+          <DockLabel side={labelSide}>Liderlik Tablosu</DockLabel>
           <DockIcon>
             <div className={getIconBoxClass(activeFile === "leaderboard.rank")}>
               <Trophy className={iconSize} />

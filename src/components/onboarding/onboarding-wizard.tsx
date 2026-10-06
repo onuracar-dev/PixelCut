@@ -502,34 +502,35 @@ export function OnboardingWizard({
                         <div className="flex items-center justify-between">
                           <label className="text-[12.5px] font-semibold text-label flex items-center gap-1.5">
                             <Lock className="size-3.5 text-label-2" />
-                            Öğretmen Doğrulama Şifresi
+                            Eğitmen PIN Kodu
                           </label>
                           <span className="text-[11px] text-label-3 font-mono bg-well/60 px-2 py-0.5 rounded-md border border-hairline/50">
-                            Varsayılan: HOCA2026
+                            6 Haneli PIN
                           </span>
                         </div>
 
                         <div className="[&_label]:hidden">
                           <PasswordField
-                            label="Öğretmen Şifresi"
-                            placeholder="Yetki şifrenizi girin..."
+                            label="Eğitmen PIN Kodu"
+                            placeholder="6 haneli PIN kodunu girin..."
                             value={teacherPassword}
+                            maxLength={6}
                             onChange={(e) => {
                               setTeacherPassword(e.target.value);
                               if (teacherPasswordError) setTeacherPasswordError("");
                             }}
                             description={
                               teacherPasswordError ||
-                              "Canlı sınıf radarı ve öğrenci yardım modunu aktifleştirmek için gereklidir."
+                              "Eğitmen kontrolü ve kullanıcı gözetimini aktifleştirmek için gereklidir."
                             }
-                            className="bg-well/50 text-[13.5px] h-11"
+                            className="bg-well/50 text-[14px] h-11 tracking-widest font-mono"
                           />
                         </div>
 
                         {teacherPassword && !teacherPasswordError && (
                           <div className="flex items-center gap-1.5 text-[11.5px] text-emerald-500 font-medium pt-0.5">
                             <CheckCircle2 className="size-3.5" />
-                            <span>Öğretmen yetkisi onaylandı.</span>
+                            <span>Eğitmen PIN kodu doğrulandı.</span>
                           </div>
                         )}
                       </div>
@@ -555,19 +556,12 @@ export function OnboardingWizard({
                       if (role === "teacher") {
                         const trimmed = teacherPassword.trim();
                         if (!trimmed) {
-                          setTeacherPasswordError("Öğretmen paneli için doğrulama şifresi zorunludur.");
+                          setTeacherPasswordError("Eğitmen paneli için 6 haneli PIN zorunludur.");
                           return;
                         }
-                        const validKeys = [
-                          "HOCA2026",
-                          "PIXELCUT",
-                          "PIXELCUT2026",
-                          "OGRETMEN2026",
-                          "HOCA",
-                          "ADMIN",
-                        ];
-                        if (!validKeys.includes(trimmed.toUpperCase())) {
-                          setTeacherPasswordError("Geçersiz şifre! (Yetki kodu: HOCA2026)");
+                        const validPins = ["749201", "749-201"];
+                        if (!validPins.includes(trimmed)) {
+                          setTeacherPasswordError("Geçersiz eğitmen PIN kodu. Lütfen doğru PIN'i girin.");
                           return;
                         }
                       }
