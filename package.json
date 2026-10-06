@@ -22,7 +22,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "acaro",
+        "owner": "onuracar-dev",
         "repo": "PixelCut"
       }
     ],
@@ -45,7 +45,7 @@
       "publish": [
         {
           "provider": "github",
-          "owner": "acaro",
+          "owner": "onuracar-dev",
           "repo": "PixelCut"
         }
       ]
