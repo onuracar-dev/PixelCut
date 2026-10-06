@@ -43,6 +43,7 @@ import { GitSidebarPanel } from "@/components/git/git-sidebar-panel";
 import { GitHubAuthModal } from "@/components/git/github-auth-modal";
 import { OnboardingWizard, OnboardingData } from "@/components/onboarding/onboarding-wizard";
 import { SupportModal } from "@/components/support/support-modal";
+import { DeveloperSupportDesk } from "@/components/developer/developer-support-desk";
 import { AuthState, loadSavedAuthState, initSupabaseAuthListener } from "@/lib/supabase-auth";
 import {
   classroomRealtime,
@@ -85,6 +86,7 @@ import {
   Radio,
   Search,
   Settings,
+  ShieldCheck,
   Smartphone,
   Sparkles,
   SplitSquareVertical,
@@ -644,6 +646,7 @@ export default function Home() {
   const [isOnboardingOpen, setIsOnboardingOpen] = React.useState<boolean>(false);
   const [onboardingProfile, setOnboardingProfile] = React.useState<OnboardingData | null>(null);
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState<boolean>(false);
+  const [isDevDeskOpen, setIsDevDeskOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -1081,6 +1084,11 @@ export default function Home() {
       icon: <LifeBuoy className="size-4 text-tint" />,
       onSelect: () => setIsSupportModalOpen(true),
     },
+    {
+      label: "Geliştirici Masası (Onur Acar)",
+      icon: <ShieldCheck className="size-4 text-blue-400" />,
+      onSelect: () => setIsDevDeskOpen(true),
+    },
   ];
 
   // Keyboard shortcuts: ⌘B (sidebar), ⌘` (terminal), ⌘⇧G (git)
@@ -1507,6 +1515,14 @@ export default function Home() {
       onSelect: () => setIsSupportModalOpen(true),
     },
     {
+      id: "action-devdesk",
+      label: "Geliştirici Masası (Developer Desk - Onur Acar)",
+      group: "Eylemler",
+      icon: <ShieldCheck className="size-3.5 text-blue-400" />,
+      keywords: "developer admin dev desk onur destek triage gelen kutusu bilet biletler ticket",
+      onSelect: () => setIsDevDeskOpen(true),
+    },
+    {
       id: "theme-light",
       label: "Cupertino Light Teması (Açık)",
       group: "Görünüm & Tema",
@@ -1550,7 +1566,7 @@ export default function Home() {
 
   return (
     <MacWindow
-      topBanner={<AppUpdaterBar currentVersion="0.1.0" githubRepo="acaro/PixelCut" />}
+      topBanner={<AppUpdaterBar currentVersion="0.1.0" githubRepo="onuracar-dev/PixelCut" />}
       toolbarLeft={
         <div className="flex items-center gap-2">
           <button
@@ -1670,6 +1686,17 @@ export default function Home() {
               <span>👨‍🏫 Hoca Modu</span>
             </div>
           )}
+
+          {/* Developer Desk Shortcut */}
+          <button
+            type="button"
+            onClick={() => setIsDevDeskOpen(true)}
+            className="mac-btn mac-btn-secondary h-[28px] px-2.5 text-[11px] gap-1.5 text-blue-400 hover:text-blue-300 border-blue-500/25 bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+            title="Geliştirici Masası (Onur Acar)"
+          >
+            <ShieldCheck className="size-3.5" />
+            <span className="font-semibold hidden sm:inline">Dev Desk</span>
+          </button>
 
           {/* Search Trigger */}
           <button
@@ -2439,6 +2466,14 @@ export default function Home() {
             email: authState.user?.email || "ogrenci@lab.edu.tr",
             role: userRole,
           }}
+        />
+
+        {/* Developer Support Desk (Inbox Triage & Live Support Conversation) */}
+        <DeveloperSupportDesk
+          isOpen={isDevDeskOpen}
+          onClose={() => setIsDevDeskOpen(false)}
+          developerEmail="onuracar.work@gmail.com"
+          developerName="Onur Acar"
         />
       </MacWindow>
   );
