@@ -6,17 +6,11 @@ import {
   Archive,
   Clock,
   CheckCircle,
-  Cpu,
   FileText,
-  HardDrive,
   Inbox,
   MessageSquare,
   Monitor,
   RotateCcw,
-  Sparkles,
-  Terminal,
-  Undo2,
-  XCircle,
 } from "lucide-react";
 import styles from "./inbox-triage.module.css";
 
@@ -43,7 +37,7 @@ export interface TriageMessage {
   avatarUrl?: string;
 }
 
-const DEFAULT_MESSAGES: TriageMessage[] = [
+export const DEFAULT_MESSAGES: TriageMessage[] = [
   {
     id: "PC-84192",
     sender: "Berk Yılmaz",
@@ -127,12 +121,16 @@ const DEFAULT_MESSAGES: TriageMessage[] = [
 
 export interface InboxTriageProps {
   initialMessages?: TriageMessage[];
+  selectedTicketId?: string | null;
+  onSelectTicket?: (message: TriageMessage) => void;
   onOpenConversation?: (message: TriageMessage) => void;
   className?: string;
 }
 
 export function InboxTriage({
   initialMessages = DEFAULT_MESSAGES,
+  selectedTicketId,
+  onSelectTicket,
   onOpenConversation,
   className,
 }: InboxTriageProps) {
@@ -143,7 +141,6 @@ export function InboxTriage({
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            // Map localStorage tickets to TriageMessage format
             const mapped: TriageMessage[] = parsed.map((item: any) => ({
               id: item.id || `PC-${Math.floor(10000 + Math.random() * 90000)}`,
               sender: item.userName || "Öğrenci",
@@ -158,7 +155,6 @@ export function InboxTriage({
               diagnostics: item.diagnostics || null,
               fileNames: item.fileNames || [],
             }));
-            // Merge with default sample messages (avoid duplicates)
             const combined = [...mapped];
             DEFAULT_MESSAGES.forEach((dm) => {
               if (!combined.some((c) => c.id === dm.id)) {
@@ -234,73 +230,26 @@ export function InboxTriage({
     setLastAction(null);
   };
 
-  const toggleExpand = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-    // Mark as read when expanded
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, unread: false } : m))
-    );
+  const handleRowClick = (msg: TriageMessage) => {
+    // Mark as read
+    if (msg.unread) {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === msg.id ? { ...m, unread: false } : m))
+      );
+    }
+    // Select ticket for active conversation
+    onSelectTicket?.(msg);
+    onOpenConversation?.(msg);
   };
-
-  // Keyboard navigation
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept if user is typing in an input
-      if (
-        document.activeElement?.tagName === "INPUT" ||
-        document.activeElement?.tagName === "TEXTAREA"
-      ) {
-        return;
-      }
-
-      if (e.key === "ArrowDown" || e.key === "j") {
-        e.preventDefault();
-        setFocusedIndex((prev) => Math.min(prev + 1, filteredMessages.length - 1));
-      } else if (e.key === "ArrowUp" || e.key === "k") {
-        e.preventDefault();
-        setFocusedIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === "Enter" || e.key === " ") {
-        const item = filteredMessages[focusedIndex];
-        if (item) {
-          e.preventDefault();
-          toggleExpand(item.id);
-        }
-      } else if (e.key.toLowerCase() === "e") {
-        const item = filteredMessages[focusedIndex];
-        if (item && item.folder !== "archive") {
-          e.preventDefault();
-          moveMessage(item.id, "archive");
-        }
-      } else if (e.key.toLowerCase() === "s") {
-        const item = filteredMessages[focusedIndex];
-        if (item && item.folder === "inbox") {
-          e.preventDefault();
-          moveMessage(item.id, "snoozed");
-        }
-      } else if (e.key.toLowerCase() === "u") {
-        const item = filteredMessages[focusedIndex];
-        if (item && item.folder !== "inbox") {
-          e.preventDefault();
-          moveMessage(item.id, "inbox");
-        }
-      } else if (e.key.toLowerCase() === "z" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        undoLastAction();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [filteredMessages, focusedIndex, lastAction]);
 
   return (
     <div className={`${styles.triage} ${className || ""}`}>
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.titleArea}>
-          <h2 className={styles.title}>Geliştirici Destek Masası</h2>
+          <h2 className={styles.title}>Destek Talepleri</h2>
           <span className={styles.unreadCount}>
-            {unreadCount > 0 ? `${unreadCount} okunmamış talep` : "Tüm talepler güncel"}
+            {unreadCount > 0 ? `${unreadCount} yeni` : "Tümü okundu"}
           </span>
         </div>
 
@@ -313,10 +262,10 @@ export function InboxTriage({
           <span
             className="size-1.5 rounded-full"
             style={{
-              backgroundColor: unreadOnly ? "var(--surface, #18181b)" : "var(--accent, #3b82f6)",
+              backgroundColor: unreadOnly ? "#141416" : "#3b82f6",
             }}
           />
-          Sadece Okunmamışlar
+          Okunmamış
         </button>
       </div>
 
@@ -334,7 +283,7 @@ export function InboxTriage({
               <motion.div layoutId="triage-tab-indicator" className={styles.tabIndicator} />
             )}
             <Inbox className="size-3.5" />
-            <span>Gelen Kutusu</span>
+            <span>Gelen</span>
             <span className={styles.tabBadge}>{folderCounts.inbox}</span>
           </button>
 
@@ -349,7 +298,7 @@ export function InboxTriage({
               <motion.div layoutId="triage-tab-indicator" className={styles.tabIndicator} />
             )}
             <Clock className="size-3.5" />
-            <span>Bekletilen</span>
+            <span>Bekleyen</span>
             <span className={styles.tabBadge}>{folderCounts.snoozed}</span>
           </button>
 
@@ -364,7 +313,7 @@ export function InboxTriage({
               <motion.div layoutId="triage-tab-indicator" className={styles.tabIndicator} />
             )}
             <Archive className="size-3.5" />
-            <span>Arşiv & Çözülen</span>
+            <span>Çözülen</span>
             <span className={styles.tabBadge}>{folderCounts.archive}</span>
           </button>
         </div>
@@ -388,16 +337,16 @@ export function InboxTriage({
           </div>
         ) : (
           filteredMessages.map((msg, index) => {
-            const isExpanded = expandedId === msg.id;
-            const isFocused = focusedIndex === index;
+            const isSelected = selectedTicketId === msg.id;
 
             return (
               <div
                 key={msg.id}
-                className={`${styles.row} ${isFocused ? styles.rowSelected : ""}`}
+                className={`${styles.row} ${isSelected ? styles.rowSelected : ""}`}
+                onClick={() => handleRowClick(msg)}
               >
                 {/* Summary Row */}
-                <div className={styles.rowSummary} onClick={() => toggleExpand(msg.id)}>
+                <div className={styles.rowSummary}>
                   {msg.unread ? (
                     <div className={styles.unreadDot} />
                   ) : (
@@ -428,10 +377,19 @@ export function InboxTriage({
                     </div>
                   </div>
 
-                  <div className={styles.rightMeta}>
+                  <div className={styles.rightMeta} onClick={(e) => e.stopPropagation()}>
                     <span className={styles.time}>{msg.time}</span>
 
-                    <div className={styles.quickActions} onClick={(e) => e.stopPropagation()}>
+                    <div className={styles.quickActions}>
+                      <button
+                        type="button"
+                        title="Sohbeti Aç"
+                        onClick={() => handleRowClick(msg)}
+                        className={styles.iconBtn}
+                      >
+                        <MessageSquare className="size-3.5 text-blue-400" />
+                      </button>
+
                       {msg.folder !== "archive" && (
                         <button
                           type="button"
@@ -465,104 +423,6 @@ export function InboxTriage({
                     </div>
                   </div>
                 </div>
-
-                {/* Expanded Details */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                      className={styles.details}
-                    >
-                      <div className={styles.detailsBody}>{msg.body}</div>
-
-                      {/* Diagnostics Chips */}
-                      {msg.diagnostics && (
-                        <div className={styles.diagnosticsBar}>
-                          <span className="text-muted-foreground mr-1 flex items-center gap-1">
-                            <Monitor className="size-3" /> Donanım:
-                          </span>
-                          {msg.diagnostics.os && (
-                            <span className={styles.diagChip}>{msg.diagnostics.os}</span>
-                          )}
-                          {msg.diagnostics.platform && (
-                            <span className={styles.diagChip}>{msg.diagnostics.platform}</span>
-                          )}
-                          {msg.diagnostics.screen && (
-                            <span className={styles.diagChip}>{msg.diagnostics.screen}</span>
-                          )}
-                          {msg.diagnostics.theme && (
-                            <span className={styles.diagChip}>Tema: {msg.diagnostics.theme}</span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Attached Files */}
-                      {msg.fileNames && msg.fileNames.length > 0 && (
-                        <div className={styles.attachmentsRow}>
-                          <span className="text-[11px] text-muted-foreground mr-1 flex items-center gap-1">
-                            <FileText className="size-3" /> Ekler:
-                          </span>
-                          {msg.fileNames.map((fn, i) => (
-                            <span key={i} className={styles.attachmentBadge}>
-                              <FileText className="size-3" />
-                              {fn}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Actions */}
-                      <div className={styles.actionRow}>
-                        <div className={styles.actionBtnGroup}>
-                          {msg.folder === "inbox" ? (
-                            <button
-                              type="button"
-                              onClick={() => moveMessage(msg.id, "snoozed")}
-                              className={styles.btnAction}
-                            >
-                              <Clock className="size-3.5" />
-                              Beklet (S)
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => moveMessage(msg.id, "inbox")}
-                              className={styles.btnAction}
-                            >
-                              <RotateCcw className="size-3.5" />
-                              Gelen Kutusuna Taşı (U)
-                            </button>
-                          )}
-
-                          {msg.folder !== "archive" && (
-                            <button
-                              type="button"
-                              onClick={() => moveMessage(msg.id, "archive")}
-                              className={styles.btnAction}
-                            >
-                              <Archive className="size-3.5" />
-                              Çözüldü Olarak Arşivle (E)
-                            </button>
-                          )}
-                        </div>
-
-                        {onOpenConversation && (
-                          <button
-                            type="button"
-                            onClick={() => onOpenConversation(msg)}
-                            className={styles.btnPrimaryAction}
-                          >
-                            <MessageSquare className="size-3.5" />
-                            Yanıtla & Sohbet Başlat
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             );
           })
@@ -573,10 +433,7 @@ export function InboxTriage({
       <div className={styles.footer}>
         <div className={styles.shortcuts}>
           <span>
-            <kbd className={styles.kbd}>↑</kbd> <kbd className={styles.kbd}>↓</kbd> Gezin
-          </span>
-          <span>
-            <kbd className={styles.kbd}>Enter</kbd> Detay
+            <kbd className={styles.kbd}>Tıkla</kbd> Sohbeti Aç
           </span>
           <span>
             <kbd className={styles.kbd}>E</kbd> Arşivle

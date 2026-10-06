@@ -78,7 +78,13 @@
   --duration-instant: 120ms; --duration-fast: 160ms; --duration-standard: 240ms; --duration-considered: 480ms; --duration-spring: 580ms;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+:root[data-theme="oled"],
+:root[data-theme="nordic"],
+:root.dark,
+[data-theme="dark"],
+[data-theme="oled"],
+[data-theme="nordic"] {
   color-scheme: dark;
   --background: oklch(19% 0 0);
   --surface: oklch(21.5% 0 0);

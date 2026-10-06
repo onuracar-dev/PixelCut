@@ -36,8 +36,8 @@ export interface SupportConversationProps {
 
 const DEFAULT_QUICK_REPLIES = [
   "Ekran kartı donanım hızlandırmasını kapatıp dene.",
-  "Ctrl + Shift + R ile Electron önbelleğini sıfırla.",
-  "CSS kodunda 'overflow: hidden' ekleyince düzeldi mi?",
+  "Ctrl + Shift + R ile önbelleği temizleyip yeniden başlat.",
+  "CSS koduna 'overflow: hidden' ekleyince düzeldi mi?",
   "Sürücü uyumsuzluğunu giderdik, yeni sürümü indirebilirsin.",
   "Sorun incelendi ve çözüldü olarak işaretlendi. Başarılar!",
 ];
@@ -55,31 +55,14 @@ export function SupportConversation({
   const [isTyping, setIsTyping] = React.useState<boolean>(false);
   const threadEndRef = React.useRef<HTMLDivElement>(null);
 
-  // Initialize thread messages
-  const [messages, setMessages] = React.useState<ConversationMessage[]>(() => {
-    const list: ConversationMessage[] = [
-      {
-        id: "m-1",
-        sender: "student",
-        senderName: ticket.sender,
-        text: ticket.body,
-        timestamp: ticket.time,
-        attachments: ticket.fileNames,
-      },
-    ];
+  // Initialize or re-synchronize thread messages whenever ticket.id changes
+  const [messages, setMessages] = React.useState<ConversationMessage[]>(() => buildInitialMessages(ticket));
 
-    if (ticket.diagnostics) {
-      list.push({
-        id: "m-sys",
-        sender: "system",
-        senderName: "Sistem Raporu",
-        text: `Donanım Teşhisi Eklendi: ${ticket.diagnostics.os || "Bilinmeyen OS"} | ${ticket.diagnostics.platform || "Desktop"} | Çözünürlük: ${ticket.diagnostics.screen || "Standart"} | Tema: ${ticket.diagnostics.theme || "Koyu"}`,
-        timestamp: ticket.time,
-      });
-    }
-
-    return list;
-  });
+  React.useEffect(() => {
+    setMessages(buildInitialMessages(ticket));
+    setIsResolved(ticket.folder === "archive");
+    setInputText("");
+  }, [ticket.id, ticket.folder]);
 
   const scrollToBottom = () => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -105,7 +88,7 @@ export function SupportConversation({
     setInputText("");
     onSend?.(text);
 
-    // Simulate student response for rich interaction
+    // Simulate student response for rich live interaction
     setTimeout(() => {
       setIsTyping(true);
       setTimeout(() => {
@@ -116,12 +99,12 @@ export function SupportConversation({
             id: `st-${Date.now()}`,
             sender: "student",
             senderName: ticket.sender,
-            text: "Teşekkür ederim hocam, deniyorum hemen!",
+            text: "Teşekkür ederim Onur hocam, hemen deniyorum!",
             timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
           },
         ]);
-      }, 1600);
-    }, 800);
+      }, 1500);
+    }, 600);
   };
 
   const handleToggleResolve = () => {
@@ -152,7 +135,7 @@ export function SupportConversation({
             <button
               type="button"
               onClick={onBack}
-              title="Talepler Listesine Dön"
+              title="Geri Dön"
               className={styles.backBtn}
             >
               <ArrowLeft className="size-4" />
@@ -289,8 +272,9 @@ export function SupportConversation({
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder="Öğrenciye yanıt yaz veya yukarıdaki hızlı yanıtlardan seç..."
+          placeholder="Öğrenciye yanıt yaz veya hızlı yanıtlardan seç..."
           className={styles.inputField}
+          autoFocus
         />
 
         <button
@@ -304,4 +288,29 @@ export function SupportConversation({
       </form>
     </div>
   );
+}
+
+function buildInitialMessages(ticket: TriageMessage): ConversationMessage[] {
+  const list: ConversationMessage[] = [
+    {
+      id: `init-${ticket.id}`,
+      sender: "student",
+      senderName: ticket.sender,
+      text: ticket.body,
+      timestamp: ticket.time,
+      attachments: ticket.fileNames,
+    },
+  ];
+
+  if (ticket.diagnostics) {
+    list.push({
+      id: `sys-${ticket.id}`,
+      sender: "system",
+      senderName: "Sistem Raporu",
+      text: `Donanım & Teşhis Raporu: ${ticket.diagnostics.os || "OS"} | ${ticket.diagnostics.platform || "Platform"} | ${ticket.diagnostics.screen || "Çözünürlük"} | Tema: ${ticket.diagnostics.theme || "Koyu"}`,
+      timestamp: ticket.time,
+    });
+  }
+
+  return list;
 }
