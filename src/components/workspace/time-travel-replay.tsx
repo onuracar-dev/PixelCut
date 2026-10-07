@@ -3,19 +3,15 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Clock,
   History,
-  Maximize2,
   Pause,
   Play,
   RotateCcw,
   SkipBack,
   SkipForward,
-  Sparkles,
   Volume2,
   VolumeX,
   X,
-  Zap,
 } from "lucide-react";
 import { soundEffects } from "@/lib/sound-effects";
 
@@ -133,155 +129,128 @@ export function TimeTravelReplay({
 
   const formatElapsed = (timestamp: number) => {
     const diffSec = Math.max(0, Math.round((Date.now() - timestamp) / 1000));
-    if (diffSec < 5) return "Az önce";
-    if (diffSec < 60) return `${diffSec} sn önce`;
+    if (diffSec < 5) return "şimdi";
+    if (diffSec < 60) return `${diffSec}sn önce`;
     const min = Math.floor(diffSec / 60);
     const sec = diffSec % 60;
-    return `${min} dk ${sec} sn önce`;
+    return `${min}dk ${sec}sn önce`;
   };
 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: 12, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 12, scale: 0.98 }}
-        transition={{ type: "spring", stiffness: 380, damping: 28 }}
-        className={`w-full rounded-2xl border border-hairline/80 bg-surface/90 backdrop-blur-2xl p-3 sm:p-4 shadow-mac-lg text-label select-none ${
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 6 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className={`w-full rounded-xl border border-hairline bg-surface/95 backdrop-blur-xl p-2.5 sm:p-3 shadow-mac-sm text-label select-none ${
           className || ""
         }`}
       >
-        {/* Top Status & Info Bar */}
-        <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-hairline/50 text-[12px]">
-          <div className="flex items-center gap-2">
-            <div className="grid size-6 place-items-center rounded-lg bg-tint/15 text-tint">
-              <History className="size-3.5" />
-            </div>
-            <span className="font-semibold tracking-tight text-label">
-              Zaman Yolculuğu Replay
-            </span>
-            <span className="text-[11px] font-mono text-label-3 bg-well/70 px-2 py-0.5 rounded-full border border-hairline/40">
-              {totalCount > 0 ? `${currentIndex + 1} / ${totalCount}` : "0"} kare
+        {/* Minimal Header */}
+        <div className="flex items-center justify-between gap-2 pb-2 text-[11.5px]">
+          <div className="flex items-center gap-2 text-label-2">
+            <History className="size-3.5 text-label-3" />
+            <span className="font-medium text-label">Kod Geçmişi</span>
+            <span className="font-mono text-label-3 text-[10.5px]">
+              {totalCount > 0 ? `${currentIndex + 1}/${totalCount}` : "0"}
             </span>
             {currentSnapshot && (
-              <span className="text-[11px] text-label-2 hidden md:inline">
-                • {formatElapsed(currentSnapshot.timestamp)} ({new Date(currentSnapshot.timestamp).toLocaleTimeString("tr-TR")})
+              <span className="text-[11px] text-label-3">
+                • {formatElapsed(currentSnapshot.timestamp)}
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Live Indicator Button */}
-            <button
-              type="button"
-              onClick={() => {
-                soundEffects.playTap();
-                onJumpToLive();
-              }}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                isLive
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                  : "bg-well/60 text-label-3 hover:text-label hover:bg-well border border-hairline"
-              }`}
-              title="En son yazılan canlı koda dön"
-            >
-              <span
-                className={`size-1.5 rounded-full ${
-                  isLive ? "bg-emerald-400 animate-pulse" : "bg-label-3"
-                }`}
-              />
-              <span>{isLive ? "CANLI KOD" : "Canlıya Dön"}</span>
-            </button>
+          <div className="flex items-center gap-1.5">
+            {!isLive && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundEffects.playTap();
+                  onJumpToLive();
+                }}
+                className="mac-btn mac-btn-secondary h-[22px] px-2 text-[11px] text-label-2 hover:text-label transition-colors cursor-pointer"
+                title="Güncel canlı koda dön"
+              >
+                Canlıya Dön
+              </button>
+            )}
 
-            {/* Sound Mute Toggle */}
             <button
               type="button"
               onClick={toggleMute}
-              className="grid size-7 place-items-center rounded-lg text-label-3 hover:text-label hover:bg-well/60 transition-colors cursor-pointer"
+              className="size-6 rounded flex items-center justify-center text-label-3 hover:text-label hover:bg-well transition-colors cursor-pointer"
               title={isMuted ? "Sesi Aç" : "Sesi Kapat"}
             >
               {isMuted ? <VolumeX className="size-3.5" /> : <Volume2 className="size-3.5" />}
             </button>
 
-            {/* Close Replay View */}
             <button
               type="button"
               onClick={() => {
                 soundEffects.playTap();
                 onClose();
               }}
-              className="grid size-7 place-items-center rounded-lg text-label-3 hover:text-label hover:bg-well/60 transition-colors cursor-pointer"
-              title="Kapat (Esc)"
+              className="size-6 rounded flex items-center justify-center text-label-3 hover:text-label hover:bg-well transition-colors cursor-pointer"
+              title="Kapat"
             >
               <X className="size-3.5" />
             </button>
           </div>
         </div>
 
-        {/* Scrubber Timeline Slider */}
-        <div className="py-3 px-1 flex flex-col gap-1.5">
-          <div className="relative flex items-center">
-            <input
-              type="range"
-              min={0}
-              max={Math.max(0, totalCount - 1)}
-              value={currentIndex}
-              onChange={handleSliderChange}
-              className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-hairline-strong accent-tint focus:outline-none"
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-[10.5px] font-mono text-label-3 px-0.5">
-            <span>İlk Kod (00:00)</span>
-            <span className="text-tint font-medium">
-              {currentSnapshot?.linesCount || 0} CSS Satırı
-            </span>
-            <span>Şimdi (Canlı)</span>
-          </div>
+        {/* Minimal Scrubber Bar */}
+        <div className="py-1 px-0.5">
+          <input
+            type="range"
+            min={0}
+            max={Math.max(0, totalCount - 1)}
+            value={currentIndex}
+            onChange={handleSliderChange}
+            className="w-full h-1 rounded-full appearance-none cursor-pointer bg-hairline-strong accent-label focus:outline-none"
+          />
         </div>
 
-        {/* Bottom Playback Controls & Rollback Button */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-          {/* Left: Playback Controls */}
-          <div className="flex items-center gap-1.5">
-            {/* Step Back */}
+        {/* Minimal Controls Row */}
+        <div className="flex items-center justify-between gap-2 pt-1.5">
+          {/* Playback Controls */}
+          <div className="flex items-center gap-1">
             <button
               type="button"
               disabled={currentIndex <= 0}
               onClick={stepBackward}
-              className="grid size-8 place-items-center rounded-xl bg-well/60 hover:bg-well text-label-2 hover:text-label disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-              title="Önceki Kare (Sol Ok)"
+              className="size-7 rounded-lg flex items-center justify-center text-label-2 hover:text-label hover:bg-well disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              title="Önceki"
             >
-              <SkipBack className="size-3.5" />
+              <SkipBack className="size-3" />
             </button>
 
-            {/* Play / Pause */}
             <button
               type="button"
               onClick={togglePlay}
-              className="flex items-center justify-center size-9 rounded-xl bg-label text-surface hover:opacity-90 shadow-mac-xs transition-transform active:scale-95 cursor-pointer"
-              title={isPlaying ? "Durdur (Boşluk)" : "Oynat (Boşluk)"}
+              className="size-7 rounded-lg flex items-center justify-center bg-well hover:bg-well/80 border border-hairline text-label transition-colors cursor-pointer"
+              title={isPlaying ? "Durdur" : "Oynat"}
             >
               {isPlaying ? (
-                <Pause className="size-4 fill-current" />
+                <Pause className="size-3 fill-current" />
               ) : (
-                <Play className="size-4 fill-current ml-0.5" />
+                <Play className="size-3 fill-current ml-0.5" />
               )}
             </button>
 
-            {/* Step Forward */}
             <button
               type="button"
               disabled={currentIndex >= totalCount - 1}
               onClick={stepForward}
-              className="grid size-8 place-items-center rounded-xl bg-well/60 hover:bg-well text-label-2 hover:text-label disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-              title="Sonraki Kare (Sağ Ok)"
+              className="size-7 rounded-lg flex items-center justify-center text-label-2 hover:text-label hover:bg-well disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              title="Sonraki"
             >
-              <SkipForward className="size-3.5" />
+              <SkipForward className="size-3" />
             </button>
 
             {/* Speed Multiplier */}
-            <div className="flex items-center gap-0.5 ml-2 p-0.5 rounded-lg bg-well/60 border border-hairline/50 text-[11px] font-mono">
+            <div className="flex items-center gap-0.5 ml-1.5 p-0.5 rounded-md bg-well border border-hairline text-[10.5px] font-mono">
               {([1, 2, 4] as const).map((spd) => (
                 <button
                   key={spd}
@@ -290,9 +259,9 @@ export function TimeTravelReplay({
                     soundEffects.playTap();
                     setPlaybackSpeed(spd);
                   }}
-                  className={`px-2 py-0.5 rounded-md transition-colors cursor-pointer ${
+                  className={`px-1.5 py-0.5 rounded transition-colors cursor-pointer ${
                     playbackSpeed === spd
-                      ? "bg-surface text-label font-bold shadow-mac-xs"
+                      ? "bg-surface text-label font-semibold shadow-mac-xs"
                       : "text-label-3 hover:text-label"
                   }`}
                 >
@@ -302,23 +271,22 @@ export function TimeTravelReplay({
             </div>
           </div>
 
-          {/* Right: Rollback / Restore Button */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={!currentSnapshot}
-              onClick={() => {
-                if (currentSnapshot) {
+          {/* Rollback Action */}
+          <div>
+            {!isLive && currentSnapshot && (
+              <button
+                type="button"
+                onClick={() => {
                   soundEffects.playRollback();
                   onRollback(currentSnapshot);
-                }
-              }}
-              className="flex items-center gap-1.5 h-8 px-3.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11.5px] font-semibold transition-all cursor-pointer shadow-mac-xs active:scale-98 disabled:opacity-40"
-              title="Mevcut editördeki kodunuzu bu snapshot'taki kodla değiştirir"
-            >
-              <RotateCcw className="size-3.5" />
-              <span>Bu Koda Geri Dön</span>
-            </button>
+                }}
+                className="mac-btn mac-btn-secondary h-[24px] px-2.5 text-[11px] gap-1.5 text-label hover:text-white transition-colors cursor-pointer"
+                title="Mevcut editör kodunu bu ana geri yükler"
+              >
+                <RotateCcw className="size-3 text-label-2" />
+                <span>Bu Koda Dön</span>
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

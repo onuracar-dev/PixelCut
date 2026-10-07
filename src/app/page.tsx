@@ -2096,11 +2096,6 @@ export default function Home() {
             <div className="flex h-9 shrink-0 items-center justify-between border-b border-hairline px-4 text-[12px] select-none bg-well/40 backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <span className="font-mono font-medium text-tint truncate max-w-[280px]">{activeFile}</span>
-                {analysis.unusedPercent > 35 && activeFile === "styles.css" && !isExternalFolder && (
-                  <span className="pill bg-sys-orange/15 text-sys-orange font-mono text-[10px]">
-                    %{analysis.unusedPercent} gereksiz
-                  </span>
-                )}
                 {isExternalFolder && (
                   <span className="pill bg-tint/15 text-tint font-mono text-[10px]">
                     Yerel Disk
@@ -2108,8 +2103,8 @@ export default function Home() {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                {/* Time-Travel Code Replay Toggle Button */}
-                {!isExternalFolder && (
+                {/* Time-Travel Code Replay Toggle Button (Sadece Hoca Modunda) */}
+                {!isExternalFolder && userRole === "teacher" && (
                   <button
                     type="button"
                     onClick={() => {
@@ -2119,15 +2114,15 @@ export default function Home() {
                     className={cn(
                       "mac-btn h-[24px] px-2 text-[11px] gap-1.5 transition-all cursor-pointer",
                       isReplayOpen
-                        ? "bg-tint/15 text-tint border-tint/30 font-semibold shadow-mac-xs"
+                        ? "bg-fill text-label border border-hairline font-medium shadow-mac-xs"
                         : "mac-btn-secondary text-label-2 hover:text-label"
                     )}
-                    title="2-3 saniyelik kod zaman yolculuğu ve oynatıcı"
+                    title="2-3 saniyelik kod zaman yolculuğu ve oynatıcı (Hoca Denetimi)"
                   >
-                    <Clock className="size-3 text-tint" />
+                    <Clock className="size-3 text-label-2" />
                     <span className="hidden sm:inline">Zaman Yolculuğu</span>
-                    <span className="pill text-[9.5px] px-1 py-0 bg-well border border-hairline font-mono">
-                      {snapshots.length}
+                    <span className="text-[10px] font-mono text-label-3">
+                      ({snapshots.length})
                     </span>
                   </button>
                 )}
@@ -2143,8 +2138,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Embedded Time-Travel Replay Drawer */}
-            {isReplayOpen && !isExternalFolder && (
+            {/* Embedded Time-Travel Replay Drawer (Sadece Hoca Modunda) */}
+            {isReplayOpen && !isExternalFolder && userRole === "teacher" && (
               <div className="p-2 border-b border-hairline bg-well/25">
                 <TimeTravelReplay
                   snapshots={snapshots}
@@ -2245,21 +2240,6 @@ export default function Home() {
 
             {/* Right Column: Live Preview & Canvas */}
             <div className="dot-canvas relative flex flex-1 flex-col overflow-hidden p-6 pb-20">
-              {/* Subtle Minimalist Clean Score Pill */}
-              <div className="absolute top-8 right-8 z-20 pointer-events-none select-none">
-                <div className="flex items-center gap-1.5 rounded-full border border-hairline/80 bg-surface/85 px-3 py-1 shadow-mac-xs backdrop-blur-md">
-                  <span
-                    className={cn(
-                      "size-1.5 rounded-full",
-                      analysis.cleanScore >= 80 ? "bg-sys-green" : "bg-sys-orange"
-                    )}
-                  />
-                  <span className="text-[11px] font-mono font-medium text-label">
-                    %{analysis.cleanScore} Temiz Kod
-                  </span>
-                </div>
-              </div>
-
               {/* Preview Content */}
               <div className="relative flex flex-1 items-center justify-center overflow-auto">
                 {previewMode === "desktop" && (
