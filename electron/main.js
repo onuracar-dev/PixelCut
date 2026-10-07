@@ -130,14 +130,14 @@ function createWindow() {
     mainWindow.show();
   });
 
-  // Load URL
+  // Load URL (Desktop app opens Studio directly)
   if (isDev) {
-    const devUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";
+    const devUrl = process.env.ELECTRON_START_URL || "http://localhost:3000/app";
     mainWindow.loadURL(devUrl);
   } else {
     // In production, serve the Next.js static bundle through local HTTP server
     startStaticServer().then((port) => {
-      mainWindow.loadURL(`http://127.0.0.1:${port}`);
+      mainWindow.loadURL(`http://127.0.0.1:${port}/app`);
     });
   }
 

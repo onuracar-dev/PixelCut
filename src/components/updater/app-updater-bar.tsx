@@ -11,7 +11,7 @@ interface AppUpdaterBarProps {
 
 export function AppUpdaterBar({
   currentVersion = "0.1.0",
-  githubRepo = "acaro/PixelCut",
+  githubRepo = "onuracar-dev/PixelCut",
 }: AppUpdaterBarProps) {
   const [updateStatus, setUpdateStatus] = React.useState<
     "idle" | "available" | "downloading" | "ready"

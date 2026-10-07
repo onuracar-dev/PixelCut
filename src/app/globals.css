@@ -45,6 +45,7 @@
    All app chrome reads from --mac-* so light/dark + accent switch instantly. */
 :root {
   --font-sans: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Geist', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
   --font-mono: 'SF Mono', 'Geist Mono', ui-monospace, monospace;
 
   /* Surfaces */
@@ -749,4 +750,45 @@ html.custom-pointer-active .monaco-editor * {
 .file-tree-confirm [class*="secondary"]:hover {
   color: #111827 !important;
   background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* ───────────────────────── Hide Chrome & Browser Scrollbar ───────────────────────── */
+html,
+body {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0px !important;
+  height: 0px !important;
+}
+
+/* ───────────────────────── Lenis Smooth Scroll Rules ───────────────────────── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }

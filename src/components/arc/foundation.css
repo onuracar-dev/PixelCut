@@ -80,48 +80,42 @@
 
 :root[data-theme="dark"],
 :root[data-theme="oled"],
-:root[data-theme="nordic"],
-:root.dark,
-[data-theme="dark"],
-[data-theme="oled"],
-[data-theme="nordic"] {
+.dark {
   color-scheme: dark;
-  --background: oklch(19% 0 0);
-  --surface: oklch(21.5% 0 0);
-  --surface-raised: oklch(24% 0 0);
-  /* Keep muted surfaces and hover states distinct from the base surface in dark mode. */
-  --surface-muted: oklch(26% 0 0);
-  --foreground: oklch(96% 0 0);
-  --text-secondary: oklch(77% 0 0);
-  --text-muted: oklch(64% 0 0);
-  --border: oklch(29% 0 0);
-  --border-subtle: oklch(25% 0 0);
-  --border-strong: oklch(40% 0 0);
+  --background: #070407;
+  --surface: #0d070e;
+  --surface-raised: #130a14;
+  --surface-muted: #1a0e1b;
+  --foreground: #f5f2f5;
+  --text-secondary: #b8adb8;
+  --text-muted: #786a78;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.16);
   --focus-ring: transparent;
-  --accent: oklch(80% 0 0);
-  --accent-strong: oklch(91% 0 0);
-  --accent-subtle: oklch(80% 0 0 / .13);
-  /* Neutral dark inverts: a near-white track carries a dark thumb, so on and off never read alike. */
-  --control-on: oklch(93% 0 0);
-  --control-glyph: oklch(19% 0 0);
-  --control-track: oklch(33% 0 0);
-  --control-track-hover: oklch(37% 0 0);
-  --control-thumb: oklch(97% 0 0);
-  --control-thumb-on: oklch(19% 0 0);
-  --control-fill: oklch(62% 0 0);
-  --control-thumb-shadow: 0 0 0 .5px oklch(0% 0 0 / .3), 0 1px 2px oklch(0% 0 0 / .35), 0 2px 6px oklch(0% 0 0 / .2);
-  --success: oklch(78% .18 150);
-  --warning: oklch(83% .17 80);
-  --danger: oklch(76% .2 25);
-  --shadow-resting: 0 1px 2px oklch(0% 0 0 / .18);
-  --shadow-raised: 0 8px 22px oklch(0% 0 0 / .22);
-  --shadow-floating: 0 22px 55px oklch(0% 0 0 / .34);
-  --arc-gradient-from: oklch(38% .05 300);
-  --arc-gradient-to: oklch(40% .045 60);
-  --arc-gradient-foreground: oklch(96% .005 300);
-  --arc-gradient-soft: linear-gradient(135deg, oklch(23.5% .016 300), oklch(24% .014 65));
-  --arc-gradient-line: linear-gradient(100deg, oklch(48% .06 300), oklch(52% .055 65));
-  --arc-gradient-ink: linear-gradient(100deg, oklch(82% .07 300), oklch(86% .065 70));
+  --accent: #fb7185;
+  --accent-strong: #f43f5e;
+  --accent-subtle: rgba(251, 113, 133, 0.15);
+  --control-on: #fb7185;
+  --control-glyph: #070407;
+  --control-track: #1e1120;
+  --control-track-hover: #29182c;
+  --control-thumb: #ffffff;
+  --control-thumb-on: #ffffff;
+  --control-fill: #fb7185;
+  --control-thumb-shadow: 0 0 0 .5px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --shadow-resting: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 8px 22px rgba(0, 0, 0, 0.4);
+  --shadow-floating: 0 22px 55px rgba(0, 0, 0, 0.6);
+  --arc-gradient-from: #2d122e;
+  --arc-gradient-to: #18091a;
+  --arc-gradient-foreground: #f5f2f5;
+  --arc-gradient-soft: linear-gradient(135deg, rgba(29, 13, 30, 0.6), rgba(18, 8, 19, 0.6));
+  --arc-gradient-line: linear-gradient(100deg, rgba(251, 113, 133, 0.3), rgba(244, 63, 94, 0.1));
+  --arc-gradient-ink: linear-gradient(100deg, #fb7185, #f43f5e);
 }
 
 :root[data-accent="neutral"] { --accent: oklch(33% 0 0); --accent-strong: oklch(24% 0 0); --accent-subtle: oklch(33% 0 0 / .1); }

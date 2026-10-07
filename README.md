@@ -2,7 +2,7 @@
 
 > **Piksel Hassasiyetinde CSS Dilimleme, Canlı Sınıf Radarı ve CSSBattle Platformu**
 
-![PixelCut Studio](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80)
+![PixelCut Studio](./public/images/readme-hero.png)
 
 PixelCut Studio; modern web şablonlarından bileşen ayıklamayı (CSS slicing), temiz kod hijyen denetimini ve canlı üniversite laboratuvar eğitimini tek bir yerel masaüstü deneyiminde birleştiren profesyonel bir geliştirici stüdyosudur.
 
