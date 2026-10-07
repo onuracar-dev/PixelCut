@@ -1,9 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Check, Sliders, Palette, RefreshCw } from "lucide-react";
+import { Check, Sliders, Palette, RefreshCw, Volume2 } from "lucide-react";
 import { UserRole } from "@/types";
 import { useAppearance } from "@/lib/appearance";
+import { soundEffects } from "@/lib/sound-effects";
 import { ACCENTS, AccentId, APPEARANCES } from "@/types/theme";
 import { SegmentedControl } from "@/components/apple/segmented-control";
 import { Switch } from "@/components/apple/switch";
@@ -44,6 +45,7 @@ export function SettingsView({
 
   const [fontSize, setFontSize] = React.useState<number>(editorFontSize);
   const [fontFamily, setFontFamily] = React.useState<string>(editorFontFamily);
+  const [isSoundActive, setIsSoundActive] = React.useState<boolean>(() => !soundEffects.isMuted());
 
   React.useEffect(() => {
     setFontSize(editorFontSize);
@@ -274,6 +276,28 @@ export function SettingsView({
               <Switch
                 checked={showCssInspector}
                 onCheckedChange={(val) => onToggleCssInspector?.(val)}
+                size="md"
+              />
+            </div>
+
+            {/* Apple Haptic Sound Effects toggle row */}
+            <div className="flex items-center justify-between pt-3 border-t border-hairline">
+              <div>
+                <h4 className="text-[13px] font-medium text-label flex items-center gap-1.5">
+                  <Volume2 className="size-3.5 text-tint" />
+                  Dokunsal Ses Efektleri (Haptic Audio)
+                </h4>
+                <p className="text-[11.5px] text-label-2">
+                  Apple tarzı minimalist tıklama, sekme geçişi ve başarı zil seslerini aktifleştirir (Web Audio API).
+                </p>
+              </div>
+              <Switch
+                checked={isSoundActive}
+                onCheckedChange={(val) => {
+                  soundEffects.setMuted(!val);
+                  setIsSoundActive(val);
+                  if (val) soundEffects.playSuccessChime();
+                }}
                 size="md"
               />
             </div>

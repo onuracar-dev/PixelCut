@@ -44,6 +44,8 @@ import { GitHubAuthModal } from "@/components/git/github-auth-modal";
 import { OnboardingWizard, OnboardingData } from "@/components/onboarding/onboarding-wizard";
 import { SupportModal } from "@/components/support/support-modal";
 import { DeveloperSupportDesk } from "@/components/developer/developer-support-desk";
+import { TimeTravelReplay, CodeSnapshot } from "@/components/workspace/time-travel-replay";
+import { soundEffects } from "@/lib/sound-effects";
 import { AuthState, loadSavedAuthState, initSupabaseAuthListener } from "@/lib/supabase-auth";
 import {
   classroomRealtime,
@@ -71,6 +73,7 @@ import {
   Check,
   CheckCircle2,
   ChevronUp,
+  Clock,
   Code2,
   FileCode,
   FilePlus,
@@ -137,6 +140,59 @@ export default function Home() {
   const [analysis, setAnalysis] = React.useState<CssAnalysisResult>(() =>
     analyzeCssHygiene(htmlCode, cssCode)
   );
+
+  // 2-3 Second Time-Travel Code Snapshots
+  const [snapshots, setSnapshots] = React.useState<CodeSnapshot[]>([]);
+  const [replayIndex, setReplayIndex] = React.useState<number>(0);
+  const [isReplayOpen, setIsReplayOpen] = React.useState<boolean>(false);
+  const [isReplayLive, setIsReplayLive] = React.useState<boolean>(true);
+  const lastSnapshotRef = React.useRef<{ html: string; css: string }>({ html: "", css: "" });
+
+  // Initial seed snapshot
+  React.useEffect(() => {
+    if (snapshots.length === 0 && (htmlCode || cssCode)) {
+      lastSnapshotRef.current = { html: htmlCode, css: cssCode };
+      setSnapshots([
+        {
+          id: `snap-${Date.now()}`,
+          timestamp: Date.now(),
+          html: htmlCode,
+          css: cssCode,
+          linesCount: cssCode.split("\n").filter((l) => l.trim()).length,
+          label: "Başlangıç",
+        },
+      ]);
+    }
+  }, [htmlCode, cssCode, snapshots.length]);
+
+  // Periodic 2.5s Micro-Snapshot recorder (Runs whenever code is modified)
+  React.useEffect(() => {
+    if (isExternalFolder) return;
+    const timer = setTimeout(() => {
+      if (
+        htmlCode !== lastSnapshotRef.current.html ||
+        cssCode !== lastSnapshotRef.current.css
+      ) {
+        lastSnapshotRef.current = { html: htmlCode, css: cssCode };
+        setSnapshots((prev) => {
+          const newSnap: CodeSnapshot = {
+            id: `snap-${Date.now()}`,
+            timestamp: Date.now(),
+            html: htmlCode,
+            css: cssCode,
+            linesCount: cssCode.split("\n").filter((l) => l.trim()).length,
+          };
+          const nextList = [...prev, newSnap].slice(-120);
+          if (isReplayLive) {
+            setReplayIndex(nextList.length - 1);
+          }
+          return nextList;
+        });
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [htmlCode, cssCode, isExternalFolder, isReplayLive]);
 
   const handleOpenFolder = async () => {
     try {
@@ -1155,6 +1211,12 @@ export default function Home() {
     let effectiveHtml = htmlCode;
     let effectiveCss = cssCode;
 
+    // Time-Travel Replay: project historical snapshot when scrubbing
+    if (isReplayOpen && !isReplayLive && snapshots[replayIndex]) {
+      effectiveHtml = snapshots[replayIndex].html;
+      effectiveCss = snapshots[replayIndex].css;
+    }
+
     if (isExternalFolder) {
       effectiveHtml =
         customFiles["index.html"] ||
@@ -1285,6 +1347,7 @@ export default function Home() {
   }, [htmlCode, cssCode, showCssInspector, isExternalFolder, customFiles, resolved, activeFile, currentChallenge]);
 
   const handleSubmitSuccess = async () => {
+    soundEffects.playSuccessChime();
     if (analysis.cleanScore >= 75) {
       confetti({
         particleCount: 100,
@@ -2029,7 +2092,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* File Tab Header with Close Button */}
+            {/* File Tab Header with Close Button & Time-Travel Button */}
             <div className="flex h-9 shrink-0 items-center justify-between border-b border-hairline px-4 text-[12px] select-none bg-well/40 backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <span className="font-mono font-medium text-tint truncate max-w-[280px]">{activeFile}</span>
@@ -2044,62 +2107,130 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveFile(null)}
-                className="size-5 rounded flex items-center justify-center text-label-3 hover:text-label hover:bg-well transition-colors cursor-pointer"
-                title="Dosyayı Kapat"
-              >
-                <X className="size-3.5" />
-              </button>
+              <div className="flex items-center gap-2">
+                {/* Time-Travel Code Replay Toggle Button */}
+                {!isExternalFolder && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundEffects.playTap();
+                      setIsReplayOpen((prev) => !prev);
+                    }}
+                    className={cn(
+                      "mac-btn h-[24px] px-2 text-[11px] gap-1.5 transition-all cursor-pointer",
+                      isReplayOpen
+                        ? "bg-tint/15 text-tint border-tint/30 font-semibold shadow-mac-xs"
+                        : "mac-btn-secondary text-label-2 hover:text-label"
+                    )}
+                    title="2-3 saniyelik kod zaman yolculuğu ve oynatıcı"
+                  >
+                    <Clock className="size-3 text-tint" />
+                    <span className="hidden sm:inline">Zaman Yolculuğu</span>
+                    <span className="pill text-[9.5px] px-1 py-0 bg-well border border-hairline font-mono">
+                      {snapshots.length}
+                    </span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setActiveFile(null)}
+                  className="size-5 rounded flex items-center justify-center text-label-3 hover:text-label hover:bg-well transition-colors cursor-pointer"
+                  title="Dosyayı Kapat"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
             </div>
+
+            {/* Embedded Time-Travel Replay Drawer */}
+            {isReplayOpen && !isExternalFolder && (
+              <div className="p-2 border-b border-hairline bg-well/25">
+                <TimeTravelReplay
+                  snapshots={snapshots}
+                  currentIndex={replayIndex}
+                  isOpen={isReplayOpen}
+                  isLive={isReplayLive}
+                  onClose={() => setIsReplayOpen(false)}
+                  onIndexChange={(idx) => {
+                    setIsReplayLive(idx >= snapshots.length - 1);
+                    setReplayIndex(idx);
+                  }}
+                  onRollback={(snap) => {
+                    setHtmlCode(snap.html);
+                    setCssCode(snap.css);
+                    setIsReplayLive(true);
+                    soundEffects.playSuccessChime();
+                    setGitToast({
+                      type: "success",
+                      message: "Kod seçilen zamana başarıyla geri yüklendi!",
+                    });
+                    setTimeout(() => setGitToast(null), 3500);
+                  }}
+                  onJumpToLive={() => {
+                    setIsReplayLive(true);
+                    setReplayIndex(Math.max(0, snapshots.length - 1));
+                  }}
+                />
+              </div>
+            )}
 
               {/* Monaco Code Editor */}
               <div className="relative flex-1 min-h-[220px]">
-                <Editor
-                  height="100%"
-                  beforeMount={defineMonacoCustomThemes}
-                  onMount={(_editor, monaco) => {
-                    monacoRef.current = monaco;
-                  }}
-                  theme={getMonacoThemeName(resolved)}
-                  language={getMonacoLanguage(activeFile)}
-                  value={
-                    activeFile === "index.html" && !isExternalFolder
-                      ? htmlCode
-                      : activeFile === "styles.css" && !isExternalFolder
-                      ? cssCode
-                      : customFiles[activeFile] ?? `/* ${activeFile} */\n`
-                  }
-                  onChange={(val) => {
-                    const nextVal = val || "";
-                    if (!isExternalFolder && activeFile === "index.html") {
-                      setHtmlCode(nextVal);
-                      handleCodeChangeWithBroadcast("html", nextVal);
-                    } else if (!isExternalFolder && activeFile === "styles.css") {
-                      setCssCode(nextVal);
-                      handleCodeChangeWithBroadcast("css", nextVal);
-                    } else {
-                      setCustomFiles((prev) => ({ ...prev, [activeFile]: nextVal }));
-                      if (isExternalFolder) {
-                        saveWorkspaceFile(activeFile, nextVal);
+                {(() => {
+                  const currentReplaySnapshot = isReplayOpen && !isReplayLive ? snapshots[replayIndex] : null;
+                  const displayHtml = currentReplaySnapshot ? currentReplaySnapshot.html : htmlCode;
+                  const displayCss = currentReplaySnapshot ? currentReplaySnapshot.css : cssCode;
+
+                  return (
+                    <Editor
+                      height="100%"
+                      beforeMount={defineMonacoCustomThemes}
+                      onMount={(_editor, monaco) => {
+                        monacoRef.current = monaco;
+                      }}
+                      theme={getMonacoThemeName(resolved)}
+                      language={getMonacoLanguage(activeFile)}
+                      value={
+                        activeFile === "index.html" && !isExternalFolder
+                          ? displayHtml
+                          : activeFile === "styles.css" && !isExternalFolder
+                          ? displayCss
+                          : customFiles[activeFile] ?? `/* ${activeFile} */\n`
                       }
-                    }
-                  }}
-                  options={{
-                    minimap: { enabled: false },
-                    fontSize: editorFontSize,
-                    fontFamily: FONT_FAMILY_MAP[editorFontFamily] || editorFontFamily,
-                    fontLigatures: true,
-                    lineNumbers: "on",
-                    scrollBeyondLastLine: false,
-                    wordWrap: "on",
-                    automaticLayout: true,
-                    tabSize: 2,
-                    renderLineHighlight: "all",
-                    padding: { top: 14, bottom: 14 },
-                  }}
-                />
+                      onChange={(val) => {
+                        if (currentReplaySnapshot) return; // Read-only while in history replay
+                        const nextVal = val || "";
+                        if (!isExternalFolder && activeFile === "index.html") {
+                          setHtmlCode(nextVal);
+                          handleCodeChangeWithBroadcast("html", nextVal);
+                        } else if (!isExternalFolder && activeFile === "styles.css") {
+                          setCssCode(nextVal);
+                          handleCodeChangeWithBroadcast("css", nextVal);
+                        } else {
+                          setCustomFiles((prev) => ({ ...prev, [activeFile]: nextVal }));
+                          if (isExternalFolder) {
+                            saveWorkspaceFile(activeFile, nextVal);
+                          }
+                        }
+                      }}
+                      options={{
+                        minimap: { enabled: false },
+                        readOnly: Boolean(currentReplaySnapshot),
+                        fontSize: editorFontSize,
+                        fontFamily: FONT_FAMILY_MAP[editorFontFamily] || editorFontFamily,
+                        fontLigatures: true,
+                        lineNumbers: "on",
+                        scrollBeyondLastLine: false,
+                        wordWrap: "on",
+                        automaticLayout: true,
+                        tabSize: 2,
+                        renderLineHighlight: "all",
+                        padding: { top: 14, bottom: 14 },
+                      }}
+                    />
+                  );
+                })()}
               </div>
 
               {/* Integrated MagicUI Terminal Dock */}

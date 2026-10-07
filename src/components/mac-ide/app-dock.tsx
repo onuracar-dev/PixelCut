@@ -26,6 +26,7 @@ import {
   DockLabel,
 } from "@/components/motion-primitives/dock";
 import { useAppearance } from "@/lib/appearance";
+import { soundEffects } from "@/lib/sound-effects";
 import { cn } from "@/lib/utils";
 
 interface AppDockProps {
@@ -80,6 +81,7 @@ export function AppDock({
 
   // Toggle handler for files & full-view panels (radar, leaderboard, settings, target, html)
   const handleSelectFile = (file: string) => {
+    soundEffects.playTab();
     if (activeFile === file) {
       onSelectFile("");
     } else {
@@ -90,6 +92,7 @@ export function AppDock({
   // Toggle handler for preview modes (desktop, mobile, diff)
   const handleSetPreviewMode = (mode: "desktop" | "mobile" | "diff") => {
     if (!onSetPreviewMode) return;
+    soundEffects.playTap();
     // If coming from another panel like radar or settings, make sure we return to editor
     if (activeFile !== "styles.css" && activeFile !== "index.html") {
       onSelectFile("styles.css");
@@ -357,7 +360,11 @@ export function AppDock({
 
         {/* Dark / Light Theme Toggle */}
         <DockItem
-          onClick={() => setAppearance(resolved === "dark" ? "light" : "dark")}
+          onClick={() => {
+            const nextMode = resolved === "dark" ? "light" : "dark";
+            soundEffects.playSwitch(nextMode === "light");
+            setAppearance(nextMode);
+          }}
         >
           <DockLabel side={labelSide}>
             {resolved === "dark" ? "Aydınlık Moda Geç" : "Karanlık Moda Geç"}
