@@ -29,8 +29,7 @@ export function DeveloperSupportDesk({
   developerEmail = "onuracar.work@gmail.com",
   developerName = "Onur Acar",
 }: DeveloperSupportDeskProps) {
-  // Default to the first ticket so the chat is NEVER empty or hidden!
-  const [selectedTicket, setSelectedTicket] = React.useState<TriageMessage>(DEFAULT_MESSAGES[0]);
+  const [selectedTicket, setSelectedTicket] = React.useState<TriageMessage | null>(null);
   const [viewMode, setViewMode] = React.useState<"split" | "chat" | "triage">("split");
 
   if (!isOpen) return null;
@@ -85,14 +84,17 @@ export function DeveloperSupportDesk({
             <button
               type="button"
               onClick={() => setViewMode("chat")}
+              disabled={!selectedTicket}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
                 viewMode === "chat"
                   ? "bg-white/15 text-white shadow-sm"
-                  : "text-zinc-400 hover:text-white"
+                  : selectedTicket
+                  ? "text-zinc-400 hover:text-white"
+                  : "text-zinc-600 cursor-not-allowed"
               }`}
             >
               <MessageSquare className="size-3.5" />
-              <span>Canlı Sohbet ({selectedTicket.sender})</span>
+              <span>Canlı Sohbet {selectedTicket ? `(${selectedTicket.sender})` : ""}</span>
             </button>
 
             <button
@@ -132,7 +134,7 @@ export function DeveloperSupportDesk({
               }`}
             >
               <InboxTriage
-                selectedTicketId={selectedTicket.id}
+                selectedTicketId={selectedTicket?.id}
                 onSelectTicket={(ticket) => {
                   setSelectedTicket(ticket);
                   if (viewMode === "triage") {
@@ -147,18 +149,36 @@ export function DeveloperSupportDesk({
           {/* Right Column: Support Conversation Chat Thread (Always visible in split and chat mode) */}
           {(viewMode === "split" || viewMode === "chat") && (
             <div className="flex-1 h-full min-w-0 flex flex-col">
-              <SupportConversation
-                ticket={selectedTicket}
-                developerName={developerName}
-                onBack={viewMode === "chat" ? () => setViewMode("split") : undefined}
-                onResolve={(resolved) => {
-                  setSelectedTicket((prev) => ({
-                    ...prev,
-                    folder: resolved ? "archive" : "inbox",
-                  }));
-                }}
-                className="h-full"
-              />
+              {selectedTicket ? (
+                <SupportConversation
+                  ticket={selectedTicket}
+                  developerName={developerName}
+                  onBack={viewMode === "chat" ? () => setViewMode("split") : undefined}
+                  onResolve={(resolved) => {
+                    setSelectedTicket((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            folder: resolved ? "archive" : "inbox",
+                          }
+                        : null
+                    );
+                  }}
+                  className="h-full"
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center rounded-[18px] border border-white/8 bg-[#141416] p-8 text-center text-zinc-400">
+                  <div className="size-14 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4 text-blue-400">
+                    <MessageSquare className="size-7" />
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-white mb-1">
+                    Aktif Destek Sohbeti Seçilmedi
+                  </h3>
+                  <p className="text-[12.5px] text-zinc-400 max-w-xs leading-relaxed">
+                    Öğrencinin donanım raporunu incelemek ve doğrudan yanıt vermek için soldaki listeden bir bilet seçin.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>

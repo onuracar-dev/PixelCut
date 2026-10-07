@@ -648,6 +648,12 @@ export default function Home() {
   const [isSupportModalOpen, setIsSupportModalOpen] = React.useState<boolean>(false);
   const [isDevDeskOpen, setIsDevDeskOpen] = React.useState<boolean>(false);
 
+  // Check if current user is the verified developer (Onur Acar)
+  const isDeveloperUser = React.useMemo(() => {
+    const activeEmail = (authState.user?.email || onboardingProfile?.email || "").trim().toLowerCase();
+    return activeEmail === "onuracar.work@gmail.com";
+  }, [authState.user?.email, onboardingProfile?.email]);
+
   React.useEffect(() => {
     let isMounted = true;
 
@@ -1084,11 +1090,15 @@ export default function Home() {
       icon: <LifeBuoy className="size-4 text-tint" />,
       onSelect: () => setIsSupportModalOpen(true),
     },
-    {
-      label: "Geliştirici Masası (Onur Acar)",
-      icon: <ShieldCheck className="size-4 text-blue-400" />,
-      onSelect: () => setIsDevDeskOpen(true),
-    },
+    ...(isDeveloperUser
+      ? [
+          {
+            label: "Geliştirici Masası (Onur Acar)",
+            icon: <ShieldCheck className="size-4 text-blue-400" />,
+            onSelect: () => setIsDevDeskOpen(true),
+          },
+        ]
+      : []),
   ];
 
   // Keyboard shortcuts: ⌘B (sidebar), ⌘` (terminal), ⌘⇧G (git)
@@ -1106,6 +1116,10 @@ export default function Home() {
         e.preventDefault();
         setIsSidebarOpen((prev) => !prev || sidebarTab !== "git");
         setSidebarTab("git");
+      }
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "d") {
+        e.preventDefault();
+        setIsDevDeskOpen((prev) => !prev);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -1514,14 +1528,18 @@ export default function Home() {
       keywords: "destek support hata bug sorun yardim iletisim diagnostic rapor ss screenshot",
       onSelect: () => setIsSupportModalOpen(true),
     },
-    {
-      id: "action-devdesk",
-      label: "Geliştirici Masası (Developer Desk - Onur Acar)",
-      group: "Eylemler",
-      icon: <ShieldCheck className="size-3.5 text-blue-400" />,
-      keywords: "developer admin dev desk onur destek triage gelen kutusu bilet biletler ticket",
-      onSelect: () => setIsDevDeskOpen(true),
-    },
+    ...(isDeveloperUser
+      ? [
+          {
+            id: "action-devdesk",
+            label: "Geliştirici Masası (Developer Desk - Onur Acar)",
+            group: "Eylemler",
+            icon: <ShieldCheck className="size-3.5 text-blue-400" />,
+            keywords: "developer admin dev desk onur destek triage gelen kutusu bilet biletler ticket",
+            onSelect: () => setIsDevDeskOpen(true),
+          },
+        ]
+      : []),
     {
       id: "theme-light",
       label: "Cupertino Light Teması (Açık)",
@@ -1687,16 +1705,18 @@ export default function Home() {
             </div>
           )}
 
-          {/* Developer Desk Shortcut */}
-          <button
-            type="button"
-            onClick={() => setIsDevDeskOpen(true)}
-            className="mac-btn mac-btn-secondary h-[28px] px-2.5 text-[11px] gap-1.5 text-blue-400 hover:text-blue-300 border-blue-500/25 bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-            title="Geliştirici Masası (Onur Acar)"
-          >
-            <ShieldCheck className="size-3.5" />
-            <span className="font-semibold hidden sm:inline">Dev Desk</span>
-          </button>
+          {/* Developer Desk Shortcut (Sadece Onur Acar için veya Ctrl+Shift+D ile) */}
+          {isDeveloperUser && (
+            <button
+              type="button"
+              onClick={() => setIsDevDeskOpen(true)}
+              className="mac-btn mac-btn-secondary h-[28px] px-2.5 text-[11px] gap-1.5 text-blue-400 hover:text-blue-300 border-blue-500/25 bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+              title="Geliştirici Masası (Onur Acar)"
+            >
+              <ShieldCheck className="size-3.5" />
+              <span className="font-semibold hidden sm:inline">Dev Desk</span>
+            </button>
+          )}
 
           {/* Search Trigger */}
           <button

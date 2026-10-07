@@ -14,11 +14,11 @@ const STORAGE_KEY_USER = "csspg_gh_user";
 
 export function loadSavedAuthState(): AuthState {
   if (typeof window === "undefined") {
-    return { isAuthenticated: false, user: null, gitHubToken: null, targetRepo: "ahmet-dev/csspg-lab" };
+    return { isAuthenticated: false, user: null, gitHubToken: null, targetRepo: "" };
   }
 
   const token = localStorage.getItem(STORAGE_KEY_TOKEN);
-  const repo = localStorage.getItem(STORAGE_KEY_REPO) || "ahmet-dev/csspg-lab";
+  const repo = localStorage.getItem(STORAGE_KEY_REPO) || "";
   const userJson = localStorage.getItem(STORAGE_KEY_USER);
 
   let user: GitHubUser | null = null;

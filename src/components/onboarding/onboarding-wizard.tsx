@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -77,6 +78,7 @@ import { ActionButton } from "@/components/arc/action-button/action-button";
 export interface OnboardingData {
   role: UserRole;
   fullName: string;
+  email?: string;
   studentNo: string;
   classCode: string;
   avatarUrl: string;
@@ -174,20 +176,21 @@ export function OnboardingWizard({
   const [teacherPassword, setTeacherPassword] = React.useState<string>("");
   const [teacherPasswordError, setTeacherPasswordError] = React.useState<string>("");
 
-  const [fullName, setFullName] = React.useState<string>("Ahmet Yılmaz");
-  const [studentNo, setStudentNo] = React.useState<string>("220401048");
-  const [classCode, setClassCode] = React.useState<string>("CSS-302-LAB");
+  const [fullName, setFullName] = React.useState<string>("");
+  const [studentNo, setStudentNo] = React.useState<string>("");
+  const [classCode, setClassCode] = React.useState<string>("");
 
   // Avatar State
   const [avatarStyle, setAvatarStyle] = React.useState<string>("adventurer");
-  const [avatarSeed, setAvatarSeed] = React.useState<string>("Ahmet Yılmaz");
+  const [avatarSeed, setAvatarSeed] = React.useState<string>("");
   const [isCustomAvatar, setIsCustomAvatar] = React.useState<boolean>(false);
   const [selectedAvatar, setSelectedAvatar] = React.useState<string>(DEFAULT_AVATARS[0].src);
   const [selectedAvatarName, setSelectedAvatarName] = React.useState<string>(DEFAULT_AVATARS[0].name);
 
   // Auth State
-  const [authEmail, setAuthEmail] = React.useState<string>("ahmet.yilmaz@lab.edu.tr");
-  const [authPassword, setAuthPassword] = React.useState<string>("CssSlicer!2026");
+  const [authEmail, setAuthEmail] = React.useState<string>("");
+  const [authPassword, setAuthPassword] = React.useState<string>("");
+  const [formError, setFormError] = React.useState<string>("");
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [connectedProvider, setConnectedProvider] = React.useState<"github" | "google" | "apple" | null>(null);
   const [githubConnected, setGithubConnected] = React.useState<boolean>(false);
@@ -220,18 +223,50 @@ export function OnboardingWizard({
       if (provider === "github") setGithubConnected(false);
     } else {
       setConnectedProvider(provider);
+      setFormError("");
       if (provider === "github") {
         setGithubConnected(true);
-        if (!fullName || fullName === "Ahmet Yılmaz") setFullName("Ahmet Yılmaz");
-        setAuthEmail("ahmet.yilmaz@github.com");
-      } else if (provider === "google") {
-        if (!fullName || fullName === "Ahmet Yılmaz") setFullName("Ahmet Yılmaz");
-        setAuthEmail("ahmet.yilmaz@gmail.com");
-      } else if (provider === "apple") {
-        if (!fullName || fullName === "Ahmet Yılmaz") setFullName("Ahmet Yılmaz");
-        setAuthEmail("ahmet.yilmaz@icloud.com");
       }
     }
+  };
+
+  const validateStep5 = (): boolean => {
+    setFormError("");
+    const trimmedName = fullName.trim();
+    const trimmedEmail = authEmail.trim().toLowerCase();
+    const trimmedPassword = authPassword;
+
+    if (!trimmedName || trimmedName.length < 2) {
+      setFormError("Lütfen adınızı ve soyadınızı eksiksiz girin (en az 2 karakter).");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+      setFormError("Lütfen geçerli bir e-posta adresi girin (örn: ad.soyad@ogr.uni.edu.tr).");
+      return false;
+    }
+
+    // Duplicate Email Check
+    try {
+      const existingUsers = JSON.parse(localStorage.getItem("csspg_registered_users") || "[]");
+      if (Array.isArray(existingUsers)) {
+        const isDuplicate = existingUsers.some(
+          (u: any) => (u.email || "").trim().toLowerCase() === trimmedEmail
+        );
+        if (isDuplicate) {
+          setFormError(`"${trimmedEmail}" e-posta adresiyle kayıtlı bir hesap zaten var! Lütfen farklı bir e-posta kullanın.`);
+          return false;
+        }
+      }
+    } catch (e) {}
+
+    if (trimmedPassword.length < 6) {
+      setFormError("Güvenliğiniz için şifreniz en az 6 karakter olmalıdır.");
+      return false;
+    }
+
+    return true;
   };
 
   // Maximize desktop window on first launch
@@ -246,14 +281,37 @@ export function OnboardingWizard({
   if (!isOpen) return null;
 
   const handleNext = () => {
+    if (step === 5) {
+      if (!validateStep5()) return;
+
+      // Register new user record in localStorage
+      try {
+        const existingUsers = JSON.parse(localStorage.getItem("csspg_registered_users") || "[]");
+        const userRecord = {
+          fullName: fullName.trim(),
+          email: authEmail.trim().toLowerCase(),
+          role,
+          studentNo: studentNo.trim() || undefined,
+          classCode: classCode.trim() || undefined,
+          avatarUrl: selectedAvatar,
+          createdAt: new Date().toISOString(),
+        };
+        if (!existingUsers.some((u: any) => (u.email || "").toLowerCase() === userRecord.email)) {
+          existingUsers.push(userRecord);
+          localStorage.setItem("csspg_registered_users", JSON.stringify(existingUsers));
+        }
+      } catch (e) {}
+    }
+
     if (step < totalSteps) {
       setStep((prev) => prev + 1);
     } else {
       onComplete({
         role,
-        fullName: fullName.trim() || (role === "teacher" ? "Dr. Öğr. Üyesi" : "Öğrenci"),
-        studentNo: studentNo.trim() || "220401048",
-        classCode: classCode.trim() || "CSS-302-LAB",
+        fullName: fullName.trim() || (role === "teacher" ? "Eğitmen" : "Öğrenci"),
+        email: authEmail.trim(),
+        studentNo: studentNo.trim() || "",
+        classCode: classCode.trim() || "",
         avatarUrl: selectedAvatar,
         theme: appearance,
         githubConnected,
@@ -832,6 +890,14 @@ export function OnboardingWizard({
                     </span>
                   </div>
 
+                  {/* Validation Error Banner */}
+                  {formError && (
+                    <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-[12px] leading-tight animate-in fade-in slide-in-from-top-1">
+                      <AlertCircle className="size-4 shrink-0 text-rose-500" />
+                      <span>{formError}</span>
+                    </div>
+                  )}
+
                   {/* Inputs */}
                   <div className="space-y-3.5">
                     {/* Full Name with Live DiceBear Avatar Badge */}
@@ -859,6 +925,7 @@ export function OnboardingWizard({
                           onChange={(e) => {
                             const newName = e.target.value;
                             setFullName(newName);
+                            if (formError) setFormError("");
                             if (!isCustomAvatar) {
                               const newAvatar = buildDicebearUrl(newName, avatarStyle);
                               setSelectedAvatar(newAvatar);
@@ -881,7 +948,10 @@ export function OnboardingWizard({
                         <input
                           type="email"
                           value={authEmail}
-                          onChange={(e) => setAuthEmail(e.target.value)}
+                          onChange={(e) => {
+                            setAuthEmail(e.target.value);
+                            if (formError) setFormError("");
+                          }}
                           placeholder="ad.soyad@ogr.uni.edu.tr"
                           className="w-full h-11 pl-10 pr-4 rounded-xl bg-well/50 border border-hairline text-label placeholder:text-label-3 text-[13.5px] focus:outline-none focus:border-label focus:bg-surface focus:ring-1 focus:ring-label/30 transition-all duration-200"
                         />
@@ -898,7 +968,10 @@ export function OnboardingWizard({
                         <input
                           type={showPassword ? "text" : "password"}
                           value={authPassword}
-                          onChange={(e) => setAuthPassword(e.target.value)}
+                          onChange={(e) => {
+                            setAuthPassword(e.target.value);
+                            if (formError) setFormError("");
+                          }}
                           placeholder="••••••••••••"
                           className="w-full h-11 pl-10 pr-10 rounded-xl bg-well/50 border border-hairline text-label placeholder:text-label-3 text-[13.5px] focus:outline-none focus:border-label focus:bg-surface focus:ring-1 focus:ring-label/30 transition-all duration-200"
                         />
