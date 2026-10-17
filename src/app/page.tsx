@@ -26,37 +26,21 @@ function GitHubIcon({ className }: { className?: string }) {
   );
 }
 
+// Values mirror the snapshot timer and history cap in src/app/app/page.tsx.
 const PIXELCUT_STATS: Stat[] = [
-  {
-    value: 99.8,
-    decimals: 1,
-    suffix: "%",
-    label: "Pixel Match Accuracy",
-    detail: "Figma-to-code overlay",
-    context: "0.2px average tolerance",
-  },
   {
     value: 2.5,
     decimals: 1,
     suffix: "s",
-    label: "Micro-Snapshot Interval",
+    label: "Snapshot Interval",
     detail: "Time-Travel Replay",
-    context: "120-step history buffer",
+    context: "Saved automatically whenever your code changes",
   },
   {
-    value: 40,
-    suffix: "+",
-    label: "Automated CSS Hygiene Rules",
-    detail: "Spaghetti code audit",
-    context: "Depth, !important and overflow detection",
-  },
-  {
-    value: 15,
-    prefix: "<",
-    suffix: "ms",
-    label: "In-Class Realtime Latency",
-    detail: "Supabase WebSocket",
-    context: "The whole class live on one screen",
+    value: 120,
+    label: "Snapshots Kept",
+    detail: "Replay history",
+    context: "Oldest snapshots roll off after 120",
   },
 ];
 
@@ -318,8 +302,8 @@ export default function LandingPage() {
           <StatsBand
             stats={PIXELCUT_STATS}
             layout="divided"
-            title="Measurable Standards"
-            description="Every line of CSS goes through a precise audit and real-time match check."
+            title="Time-Travel by Design"
+            description="Every edit is captured so you can rewind to the moment a bug appeared."
           />
         </div>
       </section>
