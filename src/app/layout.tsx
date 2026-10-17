@@ -7,8 +7,8 @@ import { AppearanceProvider } from "@/lib/appearance";
 import { APPEARANCE_BOOT_SCRIPT } from "@/lib/appearance-script";
 
 export const metadata: Metadata = {
-  title: "PixelCut • İleri CSS Lab & Dilimleme Stüdyosu",
-  description: "Piksel hassasiyetinde bileşen dilimleme, CSS hijyen denetimi ve canlı laboratuvar platformu.",
+  title: "PixelCut • Advanced CSS Lab & Slicing Studio",
+  description: "Pixel-perfect component slicing, CSS hygiene audits and a live lab platform.",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="tr"
+      lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased dark`}
       data-theme="oled"
       data-accent="blue"

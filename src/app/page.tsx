@@ -31,118 +31,118 @@ const PIXELCUT_STATS: Stat[] = [
     value: 99.8,
     decimals: 1,
     suffix: "%",
-    label: "Piksel Eşleşme Doğruluğu",
-    detail: "Figma ve kod örtüştürme",
-    context: "0.2px ortalama tolerans",
+    label: "Pixel Match Accuracy",
+    detail: "Figma-to-code overlay",
+    context: "0.2px average tolerance",
   },
   {
     value: 2.5,
     decimals: 1,
     suffix: "s",
-    label: "Mikro Enstantane Aralığı",
-    detail: "Zaman Yolculuğu Replay",
-    context: "120 adımlık hafıza tamponu",
+    label: "Micro-Snapshot Interval",
+    detail: "Time-Travel Replay",
+    context: "120-step history buffer",
   },
   {
     value: 40,
     suffix: "+",
-    label: "Otomatik CSS Hijyen Kuralı",
-    detail: "Spagetti kod denetimi",
-    context: "Derinlik, !important ve kayma tespiti",
+    label: "Automated CSS Hygiene Rules",
+    detail: "Spaghetti code audit",
+    context: "Depth, !important and overflow detection",
   },
   {
     value: 15,
     prefix: "<",
     suffix: "ms",
-    label: "Sınıf İçi Realtime Gecikmesi",
+    label: "In-Class Realtime Latency",
     detail: "Supabase WebSocket",
-    context: "Tüm sınıf canlı ekranda",
+    context: "The whole class live on one screen",
   },
 ];
 
 const PIXELCUT_CHANGELOG_MONTHS: ChangelogMonth[] = [
-  { key: "2026-10", label: "Ekim 2026", short: "Eki" },
-  { key: "2026-09", label: "Eylül 2026", short: "Eyl" },
+  { key: "2026-10", label: "October 2026", short: "Oct" },
+  { key: "2026-09", label: "September 2026", short: "Sep" },
 ];
 
 const PIXELCUT_CHANGELOG: ChangelogEntry[] = [
   {
     id: "v0.1.0",
     month: "2026-10",
-    date: "7 Eki",
+    date: "Oct 7",
     iso: "2026-10-07",
     version: "0.1.0",
     kind: "new",
-    title: "İlk Kararlı Sürüm & Sınıf Radarı",
-    summary: "PixelCut Stüdyosu, Supabase Realtime sınıf takibi ve Hoca Zaman Yolculuğu ile yayında.",
+    title: "First Stable Release & Class Radar",
+    summary: "PixelCut Studio ships with Supabase Realtime class tracking and Teacher Time-Travel.",
     details: [
-      "Canlı Diff Slider ile tasarım referansı ve kod çıktısını milimetrik örtüştürme.",
-      "2.5 saniyelik mikro enstantanelerle çalışan Zaman Yolculuğu oynatıcısı.",
-      "Tek tıkla otomatik CSS hijyen analizi ve aşırı selector derinliği uyarısı.",
-      "Windows x64 için imzalı bağımsız .exe masaüstü kurulum paketi.",
+      "Live Diff Slider overlays the design reference and code output down to the pixel.",
+      "Time-Travel player powered by 2.5-second micro-snapshots.",
+      "One-click CSS hygiene analysis with warnings for excessive selector depth.",
+      "Standalone .exe desktop installer for Windows x64.",
     ],
   },
   {
     id: "v0.0.9",
     month: "2026-10",
-    date: "4 Eki",
+    date: "Oct 4",
     iso: "2026-10-04",
     version: "0.0.9",
     kind: "improved",
-    title: "Monaco Editör & Web Audio Efektleri",
-    summary: "Yazma gecikmesi sıfırlandı, Apple dokunsal arayüz sesleri eklendi.",
+    title: "Monaco Editor & Web Audio Effects",
+    summary: "Typing lag eliminated, Apple-style haptic UI sounds added.",
     details: [
-      "VS Code çekirdekli Monaco Editor ile tam CSS & HTML intellisense desteği.",
-      "Web Audio API üzerinden sentezlenen dokunsal tıklama ve geçiş sesleri.",
-      "GitHub & Supabase kimlik doğrulama modülü güncellendi.",
+      "Full CSS & HTML IntelliSense via the VS Code-powered Monaco Editor.",
+      "Haptic click and transition sounds synthesized with the Web Audio API.",
+      "Updated GitHub & Supabase authentication module.",
     ],
   },
   {
     id: "v0.0.8",
     month: "2026-09",
-    date: "28 Eyl",
+    date: "Sep 28",
     iso: "2026-09-28",
     version: "0.0.8",
     kind: "improved",
-    title: "macOS & Windows Çift Platform Desteği",
-    summary: "Yerel dosya sistemi (File System Access) ve yerel disk klasör desteği.",
+    title: "macOS & Windows Dual-Platform Support",
+    summary: "Local file system (File System Access) and local folder support.",
     details: [
-      "Kullanıcının bilgisayarındaki yerel proje klasörlerini doğrudan açıp kaydetme.",
-      "Sonoma & visionOS esintili yarı saydam cam pencere kromu.",
+      "Open and save project folders directly on your computer.",
+      "Translucent glass window chrome inspired by Sonoma & visionOS.",
     ],
   },
 ];
 
 const PIXELCUT_FAQ: FaqItem[] = [
   {
-    question: "PixelCut tam olarak nedir?",
+    question: "What exactly is PixelCut?",
     answer:
-      "PixelCut, frontend geliştiriciler, öğrenciler ve eğitmenler için tasarlanmış piksel hassasiyetinde bir CSS geliştirme, karşılaştırma ve sınıf laboratuvarı stüdyosudur.",
-    category: "Genel",
+      "PixelCut is a pixel-perfect CSS development, comparison and classroom lab studio built for frontend developers, students and instructors.",
+    category: "General",
   },
   {
-    question: "PixelCut masaüstü uygulaması (.exe) nasıl kurulur?",
+    question: "How do I install the PixelCut desktop app (.exe)?",
     answer:
-      "GitHub Releases sayfasından Windows için hazırlanmış .exe dosyasını indirip doğrudan çalıştırabilirsiniz. Bilgisayarınızdaki yerel klasörleri doğrudan açabilir ve çevrimdışı çalışabilirsiniz.",
-    category: "Kurulum",
+      "Download the Windows .exe from the GitHub Releases page and run it. You can open local folders on your computer directly and work offline.",
+    category: "Installation",
   },
   {
-    question: "Zaman Yolculuğu (Time-Travel) özelliği nasıl çalışır?",
+    question: "How does Time-Travel work?",
     answer:
-      "Kod yazarken her 2.5 saniyede bir mikro enstantane kaydedilir. Eğitmen veya öğrenci, kodun geçmişini kare kare geri sararak hatanın başladığı anı sesli ve görsel olarak inceleyebilir.",
-    category: "Teknik",
+      "While you code, a micro-snapshot is saved every 2.5 seconds. Instructors and students can rewind the code history frame by frame to find the exact moment a bug appeared, with audio and visual cues.",
+    category: "Technical",
   },
   {
-    question: "Sınıf Radarı ve Hoca Müdahalesi nasıl işler?",
+    question: "How do Class Radar and Teacher Intervention work?",
     answer:
-      "Supabase Realtime altyapısı sayesinde eğitmen, sınıftaki tüm öğrencilerin canlı kodunu ve tasarım eşleşme yüzdesini tek ekranda izler. Takılan öğrenciye tek tıkla bağlanıp canlı kod müdahalesi yapabilir.",
-    category: "Teknik",
+      "Built on Supabase Realtime, the instructor sees every student's live code and design match percentage on one screen, and can jump into a stuck student's workspace with one click to help live.",
+    category: "Technical",
   },
   {
-    question: "PixelCut açık kaynak mı?",
+    question: "Is PixelCut open source?",
     answer:
-      "Evet, PixelCut MIT lisansı ile tamamen açık kaynaklıdır. GitHub deposu üzerinden kaynak kodlarına erişebilir ve ücretsiz kullanabilirsiniz.",
-    category: "Lisans",
+      "Yes. PixelCut is fully open source under the MIT license. You can browse the source on GitHub and use it for free.",
+    category: "License",
   },
 ];
 
@@ -164,16 +164,16 @@ export default function LandingPage() {
             {/* Links */}
             <nav className="hidden md:flex items-center gap-5 text-[12.5px] font-medium text-neutral-300">
               <a href="#stats" className="hover:text-white transition-colors">
-                Rakamlar
+                Numbers
               </a>
               <a href="#showcase" className="hover:text-white transition-colors">
-                Stüdyo
+                Studio
               </a>
               <a href="#changelog" className="hover:text-white transition-colors">
                 Changelog
               </a>
               <a href="#faq" className="hover:text-white transition-colors">
-                SSS
+                FAQ
               </a>
               <a
                 href="https://github.com/onuracar-dev/PixelCut"
@@ -194,7 +194,7 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-[12px] font-semibold text-black hover:bg-neutral-200 transition-all shadow-sm active:scale-95"
               >
                 <Download className="h-3 w-3" />
-                <span>İndir (.exe)</span>
+                <span>Download (.exe)</span>
               </a>
             </div>
           </header>
@@ -218,12 +218,12 @@ export default function LandingPage() {
           <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
             {/* Apple Typography Headline (Exactly 3 Words, No Neon Text Above) */}
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-semibold tracking-tight text-white leading-[1.06]">
-              Piksel Hassasiyetinde CSS.
+              Pixel-Perfect CSS.
             </h1>
 
             {/* Minimal 1-Sentence Apple Subtitle */}
             <p className="mt-4 text-base sm:text-lg text-neutral-300 max-w-xl mx-auto font-normal leading-relaxed">
-              Tasarım ile kod çıktısı arasındaki farkı milimetrik sıfırlayan modern stüdyo.
+              A modern studio that closes the gap between design and code, pixel by pixel.
             </p>
 
             {/* Single Download CTA (Direct Installer Download) */}
@@ -234,12 +234,12 @@ export default function LandingPage() {
                 className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-xs sm:text-sm font-semibold text-black transition-all hover:bg-neutral-100 active:scale-95 shadow-lg hover:shadow-[0_0_25px_rgba(255,255,255,0.25)]"
               >
                 <Download className="h-4 w-4" />
-                <span>Windows için İndir (.exe)</span>
+                <span>Download for Windows (.exe)</span>
               </a>
             </div>
 
             <p className="mt-3 text-[11.5px] text-neutral-400">
-              Windows 10/11 x64 • Açık Kaynak • Bağımsız Masaüstü Kurulumu
+              Windows 10/11 x64 • Open Source • Standalone Desktop Installer
             </p>
           </div>
 
@@ -274,7 +274,7 @@ export default function LandingPage() {
               {/* Left Column: Monaco Code Snippet */}
               <div className="border-r border-white/10 p-5 bg-[#0a060a]/80 select-none overflow-hidden">
                 <div className="text-neutral-500 text-[11px] mb-3 font-sans flex items-center justify-between">
-                  <span>// CSS Kuralları & Hijyen Denetimi</span>
+                  <span>// CSS Rules & Hygiene Audit</span>
                   <span className="text-neutral-400">styles.css</span>
                 </div>
                 <div className="space-y-1 text-neutral-300 leading-relaxed">
@@ -293,17 +293,17 @@ export default function LandingPage() {
                 <div className="w-full max-w-xs rounded-xl border border-white/15 bg-white/[0.04] p-5 backdrop-blur-xl shadow-2xl relative">
                   <div className="flex items-center justify-between mb-3">
                     <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold text-neutral-200">
-                      ÖNİZLEME
+                      PREVIEW
                     </span>
                   </div>
                   <div className="text-sm font-sans font-bold text-white mb-1">
-                    Pro Plan • ₺299/ay
+                    Pro Plan • $9/mo
                   </div>
                   <p className="text-[11px] font-sans text-neutral-400 mb-4">
-                    Piksel hassasiyetinde bileşen çıktısı.
+                    Pixel-perfect component output.
                   </p>
                   <div className="w-full rounded-lg bg-white/10 text-center py-2 text-xs font-sans font-semibold text-neutral-200">
-                    Bileşen Aktif
+                    Component Active
                   </div>
                 </div>
               </div>
@@ -318,8 +318,8 @@ export default function LandingPage() {
           <StatsBand
             stats={PIXELCUT_STATS}
             layout="divided"
-            title="Ölçülebilir Standartlar"
-            description="Her CSS satırı cerrahi denetimden ve gerçek zamanlı eşleşme kontrolünden geçer."
+            title="Measurable Standards"
+            description="Every line of CSS goes through a precise audit and real-time match check."
           />
         </div>
       </section>
@@ -330,10 +330,10 @@ export default function LandingPage() {
           title={
             <div className="max-w-xl mx-auto text-center">
               <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-                Piksel Hassasiyetinde Stüdyo.
+                Pixel-Perfect Studio.
               </h2>
               <p className="mt-3 text-sm sm:text-base text-neutral-400 font-normal leading-relaxed">
-                VS Code çekirdekli Monaco editör, canlı kanvas ve otomatik kod denetimi tek bir masaüstü penceresinde.
+                A VS Code-powered Monaco editor, live canvas and automated code audit in a single desktop window.
               </p>
             </div>
           }
@@ -349,7 +349,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-neutral-300">
                 <Monitor className="h-3.5 w-3.5 text-neutral-400" />
-                <span>PixelCut Studio — Çalışma Alanı</span>
+                <span>PixelCut Studio — Workspace</span>
               </div>
               <div className="flex items-center gap-1.5 text-[11px] font-mono text-neutral-400">
                 <span>Windows x64</span>
@@ -360,7 +360,7 @@ export default function LandingPage() {
             <div className="relative flex-1 w-full overflow-hidden bg-black">
               <img
                 src="/images/studio-screenshot.png"
-                alt="PixelCut Studio Çalışma Alanı"
+                alt="PixelCut Studio Workspace"
                 className="h-full w-full object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
@@ -373,9 +373,9 @@ export default function LandingPage() {
       <section id="changelog" className="relative z-20 py-24 border-t border-white/[0.06] bg-[#070407] shadow-[0_-30px_60px_rgba(0,0,0,0.9)]">
         <div className="mx-auto max-w-5xl px-6">
           <ChangelogFeed
-            title="Sürüm Notları"
-            subtitle="PixelCut v0.1.0 kararlı sürümü ve en son geliştirmeler"
-            endNote="PixelCut masaüstü uygulaması düzenli olarak güncellenmektedir."
+            title="Release Notes"
+            subtitle="PixelCut v0.1.0 stable release and the latest improvements"
+            endNote="The PixelCut desktop app is updated regularly."
             entries={PIXELCUT_CHANGELOG}
             months={PIXELCUT_CHANGELOG_MONTHS}
           />
@@ -388,11 +388,11 @@ export default function LandingPage() {
           <FaqSection
             items={PIXELCUT_FAQ}
             variant="accordion"
-            title="Sıkça Sorulan Sorular"
-            description="PixelCut'ın kurulumu, yetenekleri ve sınıf kullanımı hakkında merak edilenler."
+            title="Frequently Asked Questions"
+            description="Common questions about installing PixelCut, its features and classroom use."
             contact={{
-              label: "Geliştiriciye Ulaşın",
-              description: "Öneri veya hata bildirimleri için doğrudan iletişime geçin.",
+              label: "Contact the Developer",
+              description: "Reach out directly with suggestions or bug reports.",
               href: "mailto:onuracar.work@gmail.com",
             }}
           />
@@ -412,16 +412,16 @@ export default function LandingPage() {
               </div>
             ),
           }}
-          tagline="Piksel hassasiyetinde CSS laboratuvarı ve görsel dilimleme stüdyosu."
+          tagline="A pixel-perfect CSS lab and visual slicing studio."
           status={null}
           newsletter={null}
           links={[
-            { label: "GitHub Deposu", href: "https://github.com/onuracar-dev/PixelCut", external: true },
-            { label: "Sürümler (.exe)", href: "https://github.com/onuracar-dev/PixelCut/releases", external: true },
-            { label: "Geliştirici İletişim", href: "mailto:onuracar.work@gmail.com" },
+            { label: "GitHub Repository", href: "https://github.com/onuracar-dev/PixelCut", external: true },
+            { label: "Releases (.exe)", href: "https://github.com/onuracar-dev/PixelCut/releases", external: true },
+            { label: "Contact Developer", href: "mailto:onuracar.work@gmail.com" },
           ]}
           legal={[
-            { label: "MIT Lisansı", href: "https://github.com/onuracar-dev/PixelCut/blob/main/LICENSE" },
+            { label: "MIT License", href: "https://github.com/onuracar-dev/PixelCut/blob/main/LICENSE" },
             { label: "v0.1.0" },
           ]}
           year={2026}
