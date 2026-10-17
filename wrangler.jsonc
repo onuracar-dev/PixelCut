@@ -1,0 +1,9 @@
+{
+  "name": "pixelcut",
+  "compatibility_date": "2026-10-01",
+  // Next.js "output: export" ile statik site üretir; Worker kodu yok, sadece out/ servis edilir.
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
