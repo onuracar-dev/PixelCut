@@ -1,75 +1,143 @@
-# PixelCut Studio
+# PixelCut
 
-> **Piksel Hassasiyetinde CSS Dilimleme, Canlı Sınıf Radarı ve CSSBattle Platformu**
+A desktop CSS studio for frontend classrooms. Students recreate a design in HTML and CSS, the editor tells them how clean their CSS is, and the instructor watches the whole class live and can step into any student's code.
 
 ![PixelCut Studio](./public/images/readme-hero.png)
 
-PixelCut Studio; modern web şablonlarından bileşen ayıklamayı (CSS slicing), temiz kod hijyen denetimini ve canlı üniversite laboratuvar eğitimini tek bir yerel masaüstü deneyiminde birleştiren profesyonel bir geliştirici stüdyosudur.
+**Website:** [pixelcut.onuracar.dev](https://pixelcut.onuracar.dev) · **Download:** [GitHub Releases](https://github.com/onuracar-dev/PixelCut/releases) (Windows x64 installer)
 
 ---
 
-## 🌟 Öne Çıkan Özellikler
+## What it does
 
-### 1. Monaco Destekli Kodlama Stüdyosu
-- **Apple macOS Pencere Ergonomisi:** Pürüzsüz pencere sürükleme, özel başlık çubuğu ve minimalist koyu/açık temalar.
-- **Canlı Önizleme:** Masaüstü tuval, iPhone mobil görünümü ve perde (diff slider) karşılaştırması.
-- **Bileşen Hijyen Denetçisi:** Kod satır sayısı, gereksiz/kullanılmayan CSS yüzdesi ve otomatik temizlik puanı (Clean Score).
+**For students**
+- **Code + live preview.** A Monaco editor (the editor inside VS Code) for HTML and CSS, next to a live canvas with desktop and phone views.
+- **Diff slider.** Drag a curtain across your output and the target design to see where they differ.
+- **CSS hygiene check.** Flags CSS classes that the HTML never uses and stylesheets that run longer than the component needs.
+- **Time-Travel replay.** Every 2.5 seconds, if your code has changed, a snapshot is saved (the last 120 are kept). You can scrub back to see when something broke.
+- **Practice arena.** Challenges at four difficulty levels, with XP and a leaderboard.
 
-### 2. Canlı Sınıf Radarı & Eğitmen Müdahalesi (In-Class Lab)
-- **Supabase Realtime Broadcast:** Öğrencinin tuş vuruşları veritabanı kotasını tüketmeden sıfır gecikmeli bellek içi WebSocket üzerinden hocanın radarına akar.
-- **Canlı Müdahale:** Eğitmen tek tıkla öğrencinin çalışma alanına bağlanabilir, canlı kod düzeltmesi gönderebilir veya yardım çağrılarını yanıtlayabilir.
-- **Yerel Taslak Koruması:** Öğrencinin yazdığı kodlar tarayıcıda `localStorage` taslaklarına anlık kaydedilir; veri kaybı yaşanmaz.
+**For instructors**
+- **Class radar.** Every student's code streams to the instructor's screen in real time.
+- **Live help.** Students can raise a help request, and the instructor can open their workspace and fix code with them.
+- **Challenge builder.** Create new challenges for the class.
 
-### 3. Ders Dışı CSSBattle Arenası (Practice)
-- **Kademeli Zorluk Seviyeleri:** Kolay, Orta, İleri ve Uzman görevler.
-- **Dinamik XP ve Liderlik Tablosu:** Çözülen görevlerin zorluğuna göre dinamik puanlama.
-- **Bulut Teslim:** Görev bitirildiğinde nihai HTML + CSS paketi Supabase veritabanına tek bir hafif kayıt olarak iletilir.
+**Desktop app**
+- Open, edit and save real project folders on your computer.
+- A built-in terminal panel.
+- Auto-updates from GitHub Releases.
+- A Git panel with diff previews. The commit history it shows is sample data; pushing goes to GitHub through the REST API.
 
-### 4. Git & GitHub Kaynak Denetimi
-- VS Code tarzı sol kenar çubuğu ve tam ekran commit ağacı.
-- Commit farkları (diff preview), dal (branch) değiştirme ve GitHub senkronizasyonu.
+![Workspace](./public/images/studio-screenshot.png)
 
 ---
 
-## 🚀 Başlangıç ve Kurulum
+## How it fits together
 
-### Gereksinimler
-- Node.js 18+
-- npm veya pnpm
+```
+┌──────────────────────────┐        ┌───────────────────────────┐
+│  Electron shell          │        │  Supabase                 │
+│  electron/main.js        │        │  · Realtime channels      │
+│  · window controls       │        │    (live code, presence,  │
+│  · file system + terminal│        │     help requests)        │
+│  · auto-updater          │        │  · challenges, submissions│
+└───────────┬──────────────┘        └─────────────▲─────────────┘
+            │ IPC (preload.js)                    │
+┌───────────▼─────────────────────────────────────┴─────────────┐
+│  Next.js app (static export)                                  │
+│  /      → landing page (also deployed to Cloudflare)          │
+│  /app   → the studio: editor, preview, classroom, arena       │
+└───────────────────────────────────────────────────────────────┘
+```
 
-### Bağımlılıkları Yükleme
+The same Next.js build powers both the website and the desktop app. `next build` writes a static site to `out/`. Electron loads it as the app's UI, and Cloudflare serves it as the website.
+
+Live classroom traffic uses Supabase Realtime **broadcast** messages, so keystrokes go straight to the instructor without being written to the database. Only finished challenge submissions are saved.
+
+---
+
+## Getting started
+
+**Requirements:** Node.js 20+ and npm.
+
 ```bash
 npm install
 ```
 
-### Masaüstü Geliştirici Modunu Başlatma
+**Run the desktop app in development** (starts Next.js and Electron together):
+
 ```bash
 npm run desktop:dev
 ```
-*Bu komut Next.js Turbopack sunucusunu ve Electron masaüstü kabuğunu eşzamanlı olarak başlatır.*
 
-### Web Modunda Çalıştırma
+**Run in the browser only:**
+
 ```bash
 npm run dev
 ```
 
-### Kurulum Paketini (.exe) Derleme
+Then open http://localhost:3000/app.
+
+**Build the Windows installer:**
+
 ```bash
 npm run desktop:build
 ```
 
+The installer is written to `dist-electron/`.
+
+### Supabase (optional)
+
+The classroom and arena features need a Supabase project. Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Without these, the app still runs and uses local sample data. The database schema is not in this repo yet. The app reads and writes the `challenges` and `submissions` tables.
+
 ---
 
-## 🛠️ Teknoloji Yığını
+## Project structure
 
-- **Kabuk:** Electron 44, electron-builder
-- **Arayüz & Çatı:** Next.js 16 (Turbopack), React 19, TypeScript
-- **Stil & Tasarım:** Tailwind CSS v4, Motion (Framer Motion)
-- **Kod Editörü:** Monaco Editor (VS Code çekirdeği)
-- **Backend & Gerçek Zamanlı İletişim:** Supabase (PostgreSQL 17, Row Level Security, Realtime Channels)
-- **Görsel Eşleme:** Pixelmatch, html-to-image
+```
+electron/            Electron main process and preload bridge
+src/app/page.tsx     Landing page
+src/app/app/         The studio
+src/components/
+  workspace/         Editor, diff slider, time-travel replay
+  classroom/         Class radar, help requests, challenge builder
+  mac-ide/           Window chrome, file tree, terminal, dock
+  git/               Git panel and GitHub sign-in
+  leaderboard/       Arena leaderboard
+src/lib/             Supabase client, realtime, CSS analyzer, GitHub API
+wrangler.jsonc       Cloudflare deploy config for the website
+```
 
 ---
 
-## 📄 Lisans
-Bu proje eğitim ve laboratuvar kullanımı amacıyla geliştirilmiştir.
+## Tech stack
+
+| Part | Tools |
+| --- | --- |
+| Desktop shell | Electron, electron-builder, electron-updater |
+| UI | Next.js 16, React 19, TypeScript |
+| Styling | Tailwind CSS 4, Motion |
+| Editor | Monaco Editor |
+| Backend | Supabase (Postgres, Realtime) |
+| Website hosting | Cloudflare Workers (static assets) |
+
+---
+
+## Deployment
+
+**Website:** Cloudflare runs `npx wrangler deploy`. `wrangler.jsonc` runs `npm run build` first, then uploads `out/`.
+
+**Desktop app:** Pushing a `v*` tag runs `.github/workflows/release.yml`. It builds the Windows installer and publishes it to GitHub Releases, and installed apps pick up the update automatically.
+
+---
+
+## License
+
+[MIT](./LICENSE)
