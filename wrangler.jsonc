@@ -1,6 +1,10 @@
 {
   "name": "pixelcut",
   "compatibility_date": "2026-10-01",
+  // Deploy'dan önce out/ üretilsin; paneldeki build command'a bağlı kalmayalım.
+  "build": {
+    "command": "npm run build"
+  },
   // Next.js "output: export" ile statik site üretir; Worker kodu yok, sadece out/ servis edilir.
   "assets": {
     "directory": "./out",
